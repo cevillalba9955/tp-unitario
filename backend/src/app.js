@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const store = require('./store');
+const authRouter = require('./routes/auth');
 const categoriesRouter = require('./routes/categories');
 const servicesRouter = require('./routes/services');
 const imagesRouter = require('./routes/images');
@@ -29,6 +30,7 @@ app.get('/api/v1/images/:imageId', (req, res) => {
 });
 
 // API routes
+app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/categories', categoriesRouter);
 app.use('/api/v1/services', servicesRouter);
 app.use('/api/v1/services/:serviceId/images', imagesRouter);

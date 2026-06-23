@@ -7,7 +7,24 @@
       "PowerShell(& \"C:\\\\utn\\\\ddsw\\\\speckit\\\\tp-unitario\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json -PathsOnly)",
       "PowerShell(& \"C:\\\\utn\\\\ddsw\\\\speckit\\\\tp-unitario\\\\.specify\\\\scripts\\\\powershell\\\\setup-plan.ps1\" -Json)",
       "PowerShell(& \"C:\\\\utn\\\\ddsw\\\\speckit\\\\tp-unitario\\\\.specify\\\\scripts\\\\powershell\\\\setup-tasks.ps1\" -Json)",
-      "PowerShell(& \"C:\\\\utn\\\\ddsw\\\\speckit\\\\tp-unitario\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json -RequireTasks -IncludeTasks)"
+      "PowerShell(& \"C:\\\\utn\\\\ddsw\\\\speckit\\\\tp-unitario\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json -RequireTasks -IncludeTasks)",
+      "Bash(docker build *)",
+      "Bash(docker run *)",
+      "Bash(curl -s http://localhost:3000/api/v1/categories)",
+      "Bash(docker exec freelancehub *)",
+      "Bash(curl -s -X POST http://localhost:3000/api/v1/services -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVlbGFuY2VySWQiOiJ1c2VyLTAwMSIsImlhdCI6MTc4MjIzNzUzOCwiZXhwIjoxNzgyODQyMzM4fQ.Lc4riLxNLuHkotUln2qs0i3hoUn-WuMRU476teG1nr8' -H 'Content-Type: application/json' -d '{\"title\":\"Diseño de logo profesional\",\"description\":\"Diseño logos únicos y memorables para tu marca.\",\"categoryId\":\"530d206e-dc36-4f8d-b7cf-8ef594534f2d\"}')",
+      "Bash(tee /tmp/service.json)",
+      "Bash(curl -s -o /tmp/r.json -w 'HTTP %{http_code}' -X POST http://localhost:3000/api/v1/services/8989f265-0bae-4994-97cb-e72d3829d7e3/publish -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVlbGFuY2VySWQiOiJ1c2VyLTAwMSIsImlhdCI6MTc4MjIzNzUzOCwiZXhwIjoxNzgyODQyMzM4fQ.Lc4riLxNLuHkotUln2qs0i3hoUn-WuMRU476teG1nr8')",
+      "Read(//tmp/**)",
+      "Bash(curl -s -o /tmp/r.json -w 'HTTP %{http_code}' -X PUT http://localhost:3000/api/v1/services/8989f265-0bae-4994-97cb-e72d3829d7e3 -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVlbGFuY2VySWQiOiJ1c2VyLTAwMSIsImlhdCI6MTc4MjIzNzUzOCwiZXhwIjoxNzgyODQyMzM4fQ.Lc4riLxNLuHkotUln2qs0i3hoUn-WuMRU476teG1nr8' -H 'Content-Type: application/json' -d '{\"packages\":[{\"name\":\"Basico\",\"scope\":\"1 concepto, 2 revisiones, archivos PNG\",\"price\":50.00,\"deliveryDays\":3,\"displayOrder\":1}]}')",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('total:', d['pagination']['total'], '| servicios:', [s['title'] for s in d['data']]\\)\")",
+      "PowerShell(npm view \"expo-image-picker@~16\" version 2>&1)",
+      "PowerShell(npm view \"expo-status-bar@~2\" version 2>&1)",
+      "PowerShell(npm view \"react-native-safe-area-context\" version 2>&1)",
+      "PowerShell(npm view \"react-native-screens\" version 2>&1)",
+      "PowerShell(npm view \"react-native-gesture-handler\" version 2>&1)",
+      "PowerShell(npm view \"@react-navigation/native\" version 2>&1)",
+      "PowerShell(npm view \"@react-navigation/stack\" version 2>&1)"
     ]
   }
 }

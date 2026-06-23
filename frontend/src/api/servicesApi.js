@@ -8,6 +8,9 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+export const login = (email, password) =>
+  api.post('/api/v1/auth/login', { email, password }).then((r) => r.data);
+
 export const getCategories = () =>
   api.get('/api/v1/categories').then((r) => r.data);
 
