@@ -31,7 +31,13 @@
 
 ## Notes
 
-- Todos los ítems pasaron en la primera iteración de validación.
+- Todos los ítems pasaron en la primera iteración de validación (pre-clarify).
 - Videos excluidos del alcance (interpretado como imágenes según Assumptions).
 - Categorías predefinidas asumidas; gestión de catálogo de categorías es feature separada.
+- Sesión de clarificación 2026-06-23: 5 preguntas respondidas, 0 regresiones.
+  - Eliminación: solo borradores son eliminables (FR-011 agregado).
+  - Moderación: sin moderación automatizada (Assumptions actualizado).
+  - Fallo de almacenamiento: error aislado, servicio guardable sin imagen (edge case actualizado).
+  - Lista "Mis Servicios": dos secciones separadas publicados/borradores (FR-009 actualizado).
+  - Límite de servicios: sin límite, con paginación (edge case confirmado).
 - Listo para `/speckit-plan`.

@@ -1,18 +1,19 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: [TEMPLATE] → 1.0.0
-Added sections:
-  - Core Principles (I–V)
-  - Stack Tecnológico y Restricciones
-  - Flujo de Trabajo y Calidad
-  - Governance
-Modified principles: N/A (initial ratification)
+Version change: 1.1.0 → 1.1.1
+Modified sections:
+  - Stack Tecnológico y Restricciones: precisión sobre ejecución del backend
+      · Backend DEBE ejecutarse en un contenedor Docker (local)
+      · La app React Native se conecta al backend vía red local (host Docker)
+      · Eliminada: referencia genérica a "ejecución local en el dispositivo" para el backend
+Added sections: N/A
 Removed sections: N/A
+Principles modified: N/A (I–V sin cambios)
 Templates reviewed:
-  - .specify/templates/plan-template.md        ✅ alineado (Constitution Check section presente)
-  - .specify/templates/spec-template.md        ✅ alineado (User Stories y Requirements compatibles)
-  - .specify/templates/tasks-template.md       ✅ alineado (fases y roles de usuario compatibles)
+  - .specify/templates/plan-template.md   ✅ alineado (sin referencias al runtime del backend)
+  - .specify/templates/spec-template.md   ✅ alineado
+  - .specify/templates/tasks-template.md  ✅ alineado
 Deferred TODOs: ninguno
 -->
 
@@ -86,19 +87,29 @@ utilizadas.
 
 ## Stack Tecnológico y Restricciones
 
-La plataforma es una **aplicación web** (no móvil nativa). Las decisiones de stack
-concretas se documentan en cada `plan.md` de feature. Las siguientes restricciones
-son fijas independientemente del stack elegido:
+La plataforma es una **aplicación móvil nativa** con arquitectura cliente-servidor
+local. El stack es fijo para todo el proyecto:
 
-- El backend DEBE exponer una API REST o equivalente; la lógica de negocio NO DEBE
-  residir en el cliente.
-- El almacenamiento de archivos multimedia (imágenes, videos de servicios) DEBE
-  delegarse a un servicio de almacenamiento dedicado; el servidor de aplicaciones
-  NO DEBE almacenar binarios localmente en producción.
+- **Backend**: Node.js + Express, ejecutado en un **contenedor Docker** local
+- **Frontend**: React Native (aplicación mobile), ejecutado en el dispositivo
+- **Persistencia**: en memoria dentro del proceso Node.js (no se utiliza base de
+  datos externa ni sistema de archivos dedicado; los datos NO persisten entre
+  reinicios del contenedor)
+- **Ejecución**: 100% local; el contenedor Docker corre en la misma red que el
+  dispositivo mobile; no se requiere despliegue en la nube ni infraestructura externa
+
+Las siguientes restricciones son fijas e inamovibles:
+
+- El backend DEBE ejecutarse como contenedor Docker; no se DEBE correr el servidor
+  Node.js directamente en el host sin Docker.
+- El backend DEBE exponer una API REST; la lógica de negocio NO DEBE residir en el
+  cliente React Native.
 - Las respuestas de la API DEBEN incluir códigos HTTP semánticamente correctos
   (200, 201, 400, 401, 403, 404, 422, 500).
-- La plataforma DEBE funcionar en los navegadores modernos de escritorio; la
-  compatibilidad móvil es deseable pero no bloquea el MVP.
+- El almacenamiento en memoria es el único mecanismo de persistencia permitido;
+  no se DEBE introducir ninguna base de datos, ORM o sistema de archivos externo.
+- La app React Native DEBE conectarse al backend mediante la IP o hostname del host
+  Docker en la red local; no se DEBE usar `localhost` directamente desde el dispositivo.
 
 ## Flujo de Trabajo y Calidad
 
@@ -127,4 +138,4 @@ son fijas independientemente del stack elegido:
 - Las consultas sobre aplicación de principios en casos límite se resuelven
   favoreciendo el principio de menor sorpresa para el usuario final.
 
-**Version**: 1.0.0 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-23
+**Version**: 1.1.1 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-23
