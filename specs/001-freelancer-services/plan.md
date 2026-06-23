@@ -1,113 +1,122 @@
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Gestión de Servicios del Freelancer
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
+**Branch**: `001-freelancer-services` | **Date**: 2026-06-23 | **Spec**: [spec.md](./spec.md)
 
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
-
-**Note**: This template is filled in by the `/speckit-plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
+**Input**: Feature specification from `/specs/001-freelancer-services/spec.md`
 
 ## Summary
 
-[Extract from feature spec: primary requirement + technical approach from research]
+El freelancer autenticado puede crear, editar, publicar y eliminar servicios en la
+plataforma freelance. Cada servicio tiene un nombre, descripción, categoría,
+entre 1 y 3 paquetes de contratación (con alcance, precio y plazo), y hasta 5
+imágenes. La validación de requisitos mínimos se ejecuta en el servidor Node.js
+antes de publicar. Las imágenes se almacenan como buffers en memoria y se sirven
+por el propio backend. El store es 100% in-memory (sin persistencia entre reinicios).
 
 ## Technical Context
 
-<!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
--->
+**Language/Version**: Node.js 20 LTS (backend) + React Native con Expo SDK 51 (frontend)
 
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]
+**Primary Dependencies**:
+- Backend: Express 4.x, `multer` (upload), `uuid` (IDs), `jsonwebtoken` (auth middleware)
+- Frontend: `expo-image-picker`, `axios`, React Navigation
 
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]
+**Storage**: In-memory (`Map` de JavaScript) — sin base de datos externa ni filesystem.
+Imágenes almacenadas como `Buffer` Node.js en el store. Ver `data-model.md`.
 
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
+**Testing**: No solicitado explícitamente. Validación manual via `quickstart.md`.
 
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]
+**Target Platform**: Backend — Linux container (Docker); Frontend — React Native (iOS/Android via Expo Go)
 
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
+**Project Type**: Mobile app + REST API (cliente-servidor local)
 
-**Project Type**: [e.g., library/cli/web-service/mobile-app/compiler/desktop-app or NEEDS CLARIFICATION]
+**Performance Goals**: Creación y publicación en < 5 min (SC-001); cambios visibles en < 10 s (SC-003)
 
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]
+**Constraints**:
+- Sin base de datos externa ni filesystem dedicado (mandato constitución v1.1.1)
+- Sin servicios de cloud (Cloudinary, S3, etc.)
+- Backend DEBE ejecutarse en Docker; React Native conecta vía IP del host
+- Imágenes max 5 MB c/u, formatos JPG/PNG/WebP
 
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]
-
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Scale/Scope**: TP universitario — volumen bajo; paginación por si acaso (page/limit)
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+### Pre-diseño
+
+| Principio | Estado | Evidencia |
+|-----------|--------|-----------|
+| I. Separación de Roles | ✅ PASS | Solo actor Freelancer en esta feature; ningún endpoint mezcla capacidades de Comprador |
+| II. Catálogo como Núcleo | ✅ PASS | La publicación de un servicio alimenta directamente el catálogo público |
+| III. Integridad de Servicios | ✅ PASS | FR-003: validación server-side de campos obligatorios antes de publicar |
+| IV. Seguridad y RBAC | ✅ PASS | Middleware JWT en todos los endpoints de escritura; HTTP 403 para acceso ajeno |
+| V. Entrega Incremental | ✅ PASS | US1 (crear/publicar) demostrable sin US2/US3; US3 completamente aditiva |
+| Stack — Docker backend | ✅ PASS | Plan incluye Dockerfile para backend Node.js |
+| Stack — In-memory only | ✅ PASS | Imágenes como Buffer; datos en Map; sin ORM, DB o filesystem externo |
+
+### Post-diseño (re-evaluación tras Phase 1)
+
+| Principio | Estado | Verificación |
+|-----------|--------|-------------|
+| III. Integridad — validación server-side | ✅ PASS | `POST /publish` devuelve 422 con campos faltantes; ver `contracts/services-api.md` |
+| IV. RBAC — HTTP 403 vs 404 | ✅ PASS | Servicios ajenos retornan 403, no 404 (contratos verificados) |
+| Stack — sin servicio externo para imágenes | ✅ PASS | `GET /api/v1/images/:id` sirve desde Buffer in-memory |
+
+**Resultado**: Sin violaciones. Complexity Tracking vacío.
 
 ## Project Structure
 
 ### Documentation (this feature)
 
 ```text
-specs/[###-feature]/
-├── plan.md              # This file (/speckit-plan command output)
-├── research.md          # Phase 0 output (/speckit-plan command)
-├── data-model.md        # Phase 1 output (/speckit-plan command)
-├── quickstart.md        # Phase 1 output (/speckit-plan command)
-├── contracts/           # Phase 1 output (/speckit-plan command)
-└── tasks.md             # Phase 2 output (/speckit-tasks command - NOT created by /speckit-plan)
+specs/001-freelancer-services/
+├── plan.md              # Este archivo
+├── research.md          # Decisiones de stack y patrones
+├── data-model.md        # Entidades y store in-memory
+├── quickstart.md        # Guía de validación end-to-end
+├── contracts/
+│   └── services-api.md  # Contratos REST (request/response)
+└── tasks.md             # Generado por /speckit-tasks
 ```
 
 ### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
-src/
-├── models/
-├── services/
-├── cli/
-└── lib/
-
-tests/
-├── contract/
-├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
 backend/
 ├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
+│   ├── store/
+│   │   └── index.js           # Store in-memory (Maps + seed de categorías)
+│   ├── middleware/
+│   │   └── auth.js            # Verificación JWT + extracción freelancerId
+│   ├── validators/
+│   │   └── serviceValidator.js # Reglas de publicación y validación de campos
+│   ├── routes/
+│   │   ├── categories.js      # GET /api/v1/categories
+│   │   ├── services.js        # CRUD + publish/unpublish
+│   │   └── images.js          # Upload, delete y serve de imágenes
+│   └── app.js                 # Express setup, middlewares, routes
+├── Dockerfile
+└── package.json
 
 frontend/
 ├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+│   ├── api/
+│   │   └── servicesApi.js     # Funciones axios para cada endpoint
+│   ├── screens/
+│   │   └── freelancer/
+│   │       ├── MyServicesScreen.js    # Lista con pestañas Publicados/Borradores
+│   │       ├── CreateServiceScreen.js # Formulario de creación
+│   │       └── EditServiceScreen.js   # Formulario de edición + multimedia
+│   └── components/
+│       └── services/
+│           ├── ServiceCard.js         # Ítem de lista con acciones
+│           ├── PackageForm.js         # Formulario de paquete
+│           └── ImageGallery.js        # Galería con upload y delete
+└── app.json                   # Expo config (incluye IP del host Docker)
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
-
-## Complexity Tracking
-
-> **Fill ONLY if Constitution Check has violations that must be justified**
-
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+**Structure Decision**: Opción Mobile + API. `backend/` contiene el servidor Node.js
+en Docker; `frontend/` contiene la app React Native con Expo. La separación refleja
+el mandato de arquitectura cliente-servidor de la constitución.

@@ -5,7 +5,9 @@
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "PowerShell(& \"C:\\\\utn\\\\ddsw\\\\speckit\\\\tp-unitario\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json -PathsOnly)",
-      "PowerShell(& \"C:\\\\utn\\\\ddsw\\\\speckit\\\\tp-unitario\\\\.specify\\\\scripts\\\\powershell\\\\setup-plan.ps1\" -Json)"
+      "PowerShell(& \"C:\\\\utn\\\\ddsw\\\\speckit\\\\tp-unitario\\\\.specify\\\\scripts\\\\powershell\\\\setup-plan.ps1\" -Json)",
+      "PowerShell(& \"C:\\\\utn\\\\ddsw\\\\speckit\\\\tp-unitario\\\\.specify\\\\scripts\\\\powershell\\\\setup-tasks.ps1\" -Json)",
+      "PowerShell(& \"C:\\\\utn\\\\ddsw\\\\speckit\\\\tp-unitario\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json -RequireTasks -IncludeTasks)"
     ]
   }
 }
