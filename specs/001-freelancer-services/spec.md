@@ -1,4 +1,4 @@
-# Feature Specification: Gestión de Servicios del Freelancer
+# Feature Specification: Gestión de Servicios(Gig) del Freelancer
 
 **Feature Branch**: `001-freelancer-services`
 
@@ -7,16 +7,6 @@
 **Status**: Draft
 
 **Input**: User description: "Gestión de servicios del freelancer: crear, editar y publicar servicios, con nombre, descripción, categoría, paquetes de contratación, multimedia"
-
-## Clarifications
-
-### Session 2026-06-23
-
-- Q: ¿Puede un freelancer eliminar permanentemente un servicio? → A: Solo los servicios en estado **borrador** pueden eliminarse permanentemente; los servicios publicados únicamente pueden despublicarse (volver a borrador).
-- Q: ¿Se requiere moderación del contenido de las imágenes subidas? → A: No; el freelancer es responsable del contenido que sube. Las imágenes se publican de inmediato sin revisión previa. La gestión de reportes de contenido inapropiado queda fuera del alcance de esta feature.
-- Q: ¿Qué ocurre cuando el servicio externo de almacenamiento no está disponible durante una subida? → A: La subida de la imagen falla con un mensaje de error claro; el freelancer puede guardar el resto del servicio sin esa imagen y reintentar la subida más tarde de forma independiente.
-- Q: ¿Cómo se organiza la pantalla "Mis Servicios" entre borradores y publicados? → A: Dos secciones o pestañas separadas: una para servicios publicados y otra para borradores. Ambas muestran estado e indicadores de acción disponibles para cada servicio.
-- Q: ¿Existe un límite en la cantidad de servicios que un freelancer puede tener? → A: No existe límite en este alcance. La lista de servicios propios DEBE soportar paginación para gestionar volúmenes elevados.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -126,16 +116,13 @@ y verificando que aparecen en la galería de la vista de detalle del catálogo.
 
 - ¿Qué ocurre si un freelancer publica un servicio y luego su cuenta es
   suspendida? El servicio debe ocultarse del catálogo automáticamente.
-- ¿Qué ocurre si se sube una imagen y el servicio de almacenamiento no está
-  disponible? El sistema muestra un error claro en la sección de imágenes; el
-  resto del servicio (campos de texto, paquetes) se puede guardar normalmente.
-  El freelancer puede reintentar la subida de forma independiente, sin riesgo de
-  duplicar la imagen.
+- ¿Qué ocurre si se sube una imagen y la conexión se corta a mitad? El sistema
+  debe mostrar un error claro y permitir reintentar sin duplicar la imagen.
 - ¿Qué pasa si dos sesiones del mismo freelancer editan el mismo servicio
   simultáneamente? La última escritura persiste (last-write-wins); no se requiere
   edición colaborativa en tiempo real para este alcance.
-- ¿Puede un freelancer tener más de un servicio? Sí, sin límite en este alcance.
-  La pantalla "Mis Servicios" DEBE soportar paginación para volúmenes elevados.
+- ¿Puede un freelancer tener más de un servicio? Sí, sin límite definido para
+  este alcance.
 
 ## Requirements *(mandatory)*
 
@@ -162,30 +149,21 @@ y verificando que aparecen en la galería de la vista de detalle del catálogo.
 - **FR-008**: El sistema DEBE rechazar cualquier intento de editar, publicar o
   despublicar un servicio que no pertenezca al freelancer autenticado, respondiendo
   con acceso denegado.
-- **FR-009**: El sistema DEBE mostrar al freelancer sus servicios organizados en
-  dos secciones separadas: **Publicados** (servicios visibles en el catálogo) y
-  **Borradores** (servicios incompletos o despublicados). Cada ítem DEBE mostrar
-  el nombre del servicio y las acciones disponibles según su estado (editar,
-  publicar, despublicar, eliminar).
+- **FR-009**: El sistema DEBE mostrar al freelancer la lista de todos sus servicios
+  (borradores y publicados) con indicación de su estado.
 - **FR-010**: Cuando un servicio publicado es modificado de tal forma que ya no
   cumple los requisitos mínimos (por ejemplo, se elimina el último paquete), el
   sistema DEBE despublicarlo automáticamente y notificar al freelancer.
-- **FR-011**: El sistema DEBE permitir al freelancer eliminar permanentemente un
-  servicio propio que esté en estado **borrador**. El sistema DEBE rechazar
-  cualquier intento de eliminar un servicio en estado **publicado**; para ello,
-  el freelancer primero debe despublicarlo.
 
 ### Key Entities *(include if feature involves data)*
 
-- **Servicio**: representa la oferta de trabajo del freelancer. Atributos clave:
+- **Gig**: representa la oferta de trabajo del freelancer. Atributos clave:
   nombre, descripción, categoría, estado (borrador / publicado), propietario
-  (freelancer). Es la entidad central de esta feature. Los servicios en estado
-  borrador pueden ser eliminados permanentemente; los publicados solo pueden
-  despublicarse.
-- **Paquete de Contratación**: opción de compra asociada a un servicio. Atributos:
+  (freelancer). Es la entidad central de esta feature.
+- **Paquete**: opción de compra asociada a un servicio. Atributos:
   nombre, alcance, precio, plazo de entrega en días. Un servicio tiene entre 1 y 3
   paquetes. Un paquete no existe sin su servicio.
-- **Imagen del Servicio**: archivo multimedia asociado a un servicio. Atributos:
+- **Imagen del Gig**: archivo multimedia asociado a un servicio. Atributos:
   URL de almacenamiento, orden de aparición. Un servicio tiene hasta 5 imágenes.
 
 ## Success Criteria *(mandatory)*
@@ -193,13 +171,13 @@ y verificando que aparecen en la galería de la vista de detalle del catálogo.
 ### Measurable Outcomes
 
 - **SC-001**: Un freelancer puede completar el flujo de creación y publicación de
-  un servicio en menos de 5 minutos desde que inicia el formulario.
+  un Gig en menos de 5 minutos desde que inicia el formulario.
 - **SC-002**: El 95% de los intentos de subida de imágenes válidas (formato y
   tamaño correctos) se completa de forma exitosa sin errores inesperados.
-- **SC-003**: Los cambios realizados a un servicio publicado son visibles en el
+- **SC-003**: Los cambios realizados a un Gig publicado son visibles en el
   catálogo en menos de 10 segundos luego de guardar.
-- **SC-004**: El 100% de los intentos de acceder o modificar servicios ajenos es
-  rechazado por el sistema sin filtración de información del servicio protegido.
+- **SC-004**: El 100% de los intentos de acceder o modificar Gigs ajenos es
+  rechazado por el sistema sin filtración de información del Gig protegido.
 - **SC-005**: Los mensajes de validación permiten al freelancer identificar y
   corregir campos inválidos sin asistencia externa, medido por tasa de éxito en
   segunda intención ≥ 90%.
@@ -212,8 +190,6 @@ y verificando que aparecen en la galería de la vista de detalle del catálogo.
   administrador de la plataforma; no forma parte del alcance de esta feature.
 - El almacenamiento de imágenes se delega a un servicio externo; la plataforma
   solo guarda la URL resultante (según Principio de Stack de la constitución).
-  Si el servicio externo no está disponible, la subida de imagen falla de forma
-  aislada sin bloquear el guardado del resto del servicio.
 - Videos no están incluidos en este alcance; "multimedia" se interpreta como
   imágenes únicamente para el MVP.
 - No se requiere previsualización en tiempo real del servicio mientras se edita;
@@ -222,7 +198,3 @@ y verificando que aparecen en la galería de la vista de detalle del catálogo.
   plataforma); el manejo de múltiples monedas o conversiones está fuera de scope.
 - La edición de un servicio publicado no requiere un flujo de aprobación;
   los cambios se aplican de inmediato.
-- No se aplica moderación de contenido a las imágenes; el sistema solo valida
-  formato y tamaño. El freelancer es responsable del contenido subido. Los
-  mecanismos de reporte de contenido inapropiado son una feature separada y
-  fuera del alcance del MVP.
