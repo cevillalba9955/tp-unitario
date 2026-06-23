@@ -51,9 +51,9 @@ router.get('/my', auth, (req, res) => {
 // POST /api/v1/services
 router.post('/', auth, (req, res) => {
   const { freelancerId } = req.user;
-  const { title = '', description = '', categoryId = null } = req.body;
+  const { title = '', description = '', categoryId = null, packages: pkgsBody } = req.body;
 
-  const { valid, errors } = validateFields({ title, description });
+  const { valid, errors } = validateFields({ title, description, packages: pkgsBody });
   if (!valid) {
     return res.status(400).json({ error: 'VALIDATION_ERROR', message: errors.join('; ') });
   }
@@ -75,7 +75,23 @@ router.post('/', auth, (req, res) => {
   };
 
   store.services.set(service.id, service);
-  res.status(201).json({ ...service, packages: [], images: [] });
+
+  if (Array.isArray(pkgsBody)) {
+    pkgsBody.forEach((pkg, idx) => {
+      const pkgId = uuidv4();
+      store.packages.set(pkgId, {
+        id: pkgId,
+        serviceId: service.id,
+        name: pkg.name,
+        scope: pkg.scope,
+        price: pkg.price,
+        deliveryDays: pkg.deliveryDays,
+        displayOrder: pkg.displayOrder || idx + 1,
+      });
+    });
+  }
+
+  res.status(201).json({ ...service, packages: getServicePackages(service.id), images: [] });
 });
 
 // GET /api/v1/services/:id

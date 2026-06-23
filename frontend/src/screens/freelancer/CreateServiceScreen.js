@@ -54,7 +54,7 @@ export default function CreateServiceScreen({ navigation }) {
     setError(null);
     try {
       const payload = buildPayload();
-      await createService({ title: payload.title, description: payload.description, categoryId: payload.categoryId });
+      await createService(payload);
       navigation.goBack();
     } catch (e) {
       setError(e.response?.data?.message || 'Error al guardar el borrador.');
@@ -68,14 +68,7 @@ export default function CreateServiceScreen({ navigation }) {
     setError(null);
     try {
       const payload = buildPayload();
-      const service = await createService({
-        title: payload.title,
-        description: payload.description,
-        categoryId: payload.categoryId,
-      });
-      // Save packages via update
-      const { updateService } = require('../../api/servicesApi');
-      await updateService(service.id, { packages: payload.packages });
+      const service = await createService(payload);
       await publishService(service.id);
       navigation.goBack();
     } catch (e) {

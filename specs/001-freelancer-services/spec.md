@@ -188,8 +188,10 @@ y verificando que aparecen en la galería de la vista de detalle del catálogo.
   usar esta feature; el flujo de registro y autenticación es una feature separada.
 - La lista de categorías disponibles es predefinida y gestionada por el
   administrador de la plataforma; no forma parte del alcance de esta feature.
-- El almacenamiento de imágenes se delega a un servicio externo; la plataforma
-  solo guarda la URL resultante (según Principio de Stack de la constitución).
+- El servidor almacena y sirve las imágenes directamente, sin depender de ningún
+  servicio externo de almacenamiento en la nube. Las imágenes no persisten entre
+  reinicios del servidor; este comportamiento es aceptable para el alcance del
+  proyecto.
 - Videos no están incluidos en este alcance; "multimedia" se interpreta como
   imágenes únicamente para el MVP.
 - No se requiere previsualización en tiempo real del servicio mientras se edita;

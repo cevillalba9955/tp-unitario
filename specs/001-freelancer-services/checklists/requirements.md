@@ -40,4 +40,7 @@
   - Fallo de almacenamiento: error aislado, servicio guardable sin imagen (edge case actualizado).
   - Lista "Mis Servicios": dos secciones separadas publicados/borradores (FR-009 actualizado).
   - Límite de servicios: sin límite, con paginación (edge case confirmado).
+- Corrección 2026-06-23: Assumption de almacenamiento de imágenes actualizada. La versión
+  anterior indicaba incorrectamente delegación a servicio externo; corregido para reflejar
+  que el servidor almacena y sirve imágenes directamente, sin persistencia entre reinicios.
 - Listo para `/speckit-plan`.
