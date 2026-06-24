@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, ScrollView, TouchableOpacity,
-  Alert, ActivityIndicator, StyleSheet,
+  ActivityIndicator, StyleSheet,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import PackageForm from '../../components/services/PackageForm';
+import PackageFormModal from '../../components/services/PackageFormModal';
 import { getCategories, createService, publishService } from '../../api/servicesApi';
-
-const emptyPackage = () => ({ name: '', scope: '', price: '', deliveryDays: '' });
 
 export default function CreateServiceScreen({ navigation }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [categoryId, setCategoryId] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [packages, setPackages] = useState([emptyPackage()]);
+  const [packages, setPackages] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -22,15 +22,29 @@ export default function CreateServiceScreen({ navigation }) {
     getCategories().then(setCategories).catch(() => {});
   }, []);
 
-  const updatePackage = (index, value) => {
-    const updated = [...packages];
-    updated[index] = value;
-    setPackages(updated);
+  const openAddModal = () => {
+    if (packages.length >= 3) return;
+    setEditingIndex(null);
+    setModalVisible(true);
   };
 
-  const addPackage = () => {
-    if (packages.length < 3) setPackages([...packages, emptyPackage()]);
+  const openEditModal = (index) => {
+    setEditingIndex(index);
+    setModalVisible(true);
   };
+
+  const handleModalConfirm = (pkg) => {
+    if (editingIndex !== null) {
+      const updated = [...packages];
+      updated[editingIndex] = pkg;
+      setPackages(updated);
+    } else {
+      setPackages([...packages, pkg]);
+    }
+    setModalVisible(false);
+  };
+
+  const handleModalCancel = () => setModalVisible(false);
 
   const removePackage = (index) => {
     setPackages(packages.filter((_, i) => i !== index));
@@ -43,8 +57,8 @@ export default function CreateServiceScreen({ navigation }) {
     packages: packages.map((p, i) => ({
       name: p.name,
       scope: p.scope,
-      price: parseFloat(p.price),
-      deliveryDays: parseInt(p.deliveryDays),
+      price: p.price,
+      deliveryDays: p.deliveryDays,
       displayOrder: i + 1,
     })),
   });
@@ -119,19 +133,33 @@ export default function CreateServiceScreen({ navigation }) {
 
       <Text style={styles.sectionTitle}>Paquetes de contratación</Text>
       {packages.map((pkg, i) => (
-        <PackageForm
-          key={i}
-          index={i}
-          value={pkg}
-          onChange={(v) => updatePackage(i, v)}
-          onRemove={() => removePackage(i)}
-        />
+        <View key={i} style={styles.pkgRow}>
+          <View style={styles.pkgInfo}>
+            <Text style={styles.pkgName}>{pkg.name || `Paquete ${i + 1}`}</Text>
+            <Text style={styles.pkgDetail}>${pkg.price} · {pkg.deliveryDays} días</Text>
+          </View>
+          <View style={styles.pkgActions}>
+            <TouchableOpacity onPress={() => openEditModal(i)} style={styles.pkgBtn}>
+              <Text style={styles.pkgBtnEdit}>Editar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => removePackage(i)} style={styles.pkgBtn}>
+              <Text style={styles.pkgBtnRemove}>✕</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       ))}
       {packages.length < 3 && (
-        <TouchableOpacity style={styles.addPkg} onPress={addPackage}>
+        <TouchableOpacity style={styles.addPkg} onPress={openAddModal}>
           <Text style={styles.addPkgText}>+ Agregar paquete</Text>
         </TouchableOpacity>
       )}
+
+      <PackageFormModal
+        visible={modalVisible}
+        initialData={editingIndex !== null ? packages[editingIndex] : null}
+        onConfirm={handleModalConfirm}
+        onCancel={handleModalCancel}
+      />
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
@@ -161,6 +189,14 @@ const styles = StyleSheet.create({
   pickerContainer: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#ddd', borderRadius: 8, marginBottom: 12, overflow: 'hidden' },
   addPkg: { borderWidth: 1, borderColor: '#1976d2', borderStyle: 'dashed', borderRadius: 8, padding: 12, alignItems: 'center', marginBottom: 12 },
   addPkgText: { color: '#1976d2', fontWeight: '600' },
+  pkgRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 10, marginBottom: 8, backgroundColor: '#fff' },
+  pkgInfo: { flex: 1 },
+  pkgName: { fontWeight: '600', fontSize: 14 },
+  pkgDetail: { color: '#777', fontSize: 12, marginTop: 2 },
+  pkgActions: { flexDirection: 'row', gap: 8 },
+  pkgBtn: { padding: 4 },
+  pkgBtnEdit: { color: '#1976d2', fontWeight: '600', fontSize: 13 },
+  pkgBtnRemove: { color: '#e53935', fontWeight: '600', fontSize: 13 },
   error: { color: '#e53935', marginBottom: 12, fontSize: 13 },
   buttons: { flexDirection: 'row', gap: 10, marginTop: 8 },
   btn: { flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
