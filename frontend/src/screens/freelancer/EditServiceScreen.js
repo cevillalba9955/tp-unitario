@@ -23,6 +23,7 @@ export default function EditServiceScreen({ route, navigation }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [publishError, setPublishError] = useState(null);
   const [autoUnpublished, setAutoUnpublished] = useState(false);
 
   useEffect(() => {
@@ -83,13 +84,18 @@ export default function EditServiceScreen({ route, navigation }) {
   };
 
   const handlePublish = async () => {
+    setPublishError(null);
     try {
       await publishService(serviceId);
       setService((s) => ({ ...s, status: 'PUBLISHED' }));
       setAutoUnpublished(false);
     } catch (e) {
-      const missing = e.response?.data?.missing?.join(', ');
-      Alert.alert('No se puede publicar', `Campos faltantes: ${missing || 'ver detalles'}.`);
+      const missing = e.response?.data?.missing;
+      setPublishError(
+        missing
+          ? `El servicio permanece como borrador. Campos faltantes: ${missing.join(', ')}.`
+          : `El servicio permanece como borrador. ${e.response?.data?.message || 'Error al intentar publicar el servicio.'}`
+      );
     }
   };
 
@@ -131,6 +137,10 @@ export default function EditServiceScreen({ route, navigation }) {
           </TouchableOpacity>
         )}
       </View>
+
+      {publishError ? (
+        <Text style={styles.publishError}>{publishError}</Text>
+      ) : null}
 
       <Text style={styles.sectionTitle}>Información del servicio</Text>
 
@@ -214,6 +224,7 @@ const styles = StyleSheet.create({
   addPkg: { borderWidth: 1, borderColor: '#1976d2', borderStyle: 'dashed', borderRadius: 8, padding: 12, alignItems: 'center', marginBottom: 12 },
   addPkgText: { color: '#1976d2', fontWeight: '600' },
   error: { color: '#e53935', marginBottom: 12, fontSize: 13 },
+  publishError: { color: '#e53935', backgroundColor: '#fdecea', borderRadius: 6, padding: 10, marginBottom: 12, fontSize: 13 },
   saveBtn: { backgroundColor: '#1976d2', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 8 },
   saveBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
 });

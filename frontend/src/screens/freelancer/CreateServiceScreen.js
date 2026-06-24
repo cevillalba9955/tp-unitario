@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, ScrollView, TouchableOpacity,
-  ActivityIndicator, StyleSheet,
+  ActivityIndicator, StyleSheet, Alert,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import PackageFormModal from '../../components/services/PackageFormModal';
@@ -80,18 +80,26 @@ export default function CreateServiceScreen({ navigation }) {
   const handleSaveAndPublish = async () => {
     setLoading(true);
     setError(null);
+    let savedService = null;
     try {
       const payload = buildPayload();
-      const service = await createService(payload);
-      await publishService(service.id);
+      savedService = await createService(payload);
+    } catch (e) {
+      setError(e.response?.data?.message || 'Error al guardar el servicio.');
+      setLoading(false);
+      return;
+    }
+    try {
+      await publishService(savedService.id);
       navigation.goBack();
     } catch (e) {
       const missing = e.response?.data?.missing;
-      setError(
-        missing
-          ? `No se puede publicar. Campos faltantes: ${missing.join(', ')}.`
-          : e.response?.data?.message || 'Error al publicar.'
-      );
+      const message = missing
+        ? `Revisá los campos faltantes: ${missing.join(', ')}.`
+        : 'Ocurrió un error al publicarlo.';
+      Alert.alert('Servicio guardado como borrador', message, [
+        { text: 'OK', onPress: () => navigation.goBack() },
+      ]);
     } finally {
       setLoading(false);
     }
