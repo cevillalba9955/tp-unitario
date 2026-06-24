@@ -43,7 +43,7 @@ export default function MyServicesScreen({ navigation }) {
   };
 
   const handleCardPress = (service) => {
-    navigation.navigate('EditService', { serviceId: service.id });
+    navigation.navigate('CreateService', { serviceId: service.id });
   };
 
   return (

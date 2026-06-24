@@ -10,8 +10,9 @@ El backend ya implementa completamente el ciclo de vida DRAFT → PUBLISHED, inc
 validación, cambio de estado y manejo de 422 con lista de campos faltantes. Esta
 feature es una mejora de UX en el frontend: (1) al crear un servicio y publicar con
 fallo, informar al usuario que su trabajo fue guardado como borrador y navegar a la
-lista; (2) al publicar desde `EditServiceScreen`, reemplazar el `Alert.alert` por un
-mensaje de error inline persistente. No hay cambios en backend, API ni entidades.
+lista; (2) al reabrir un borrador desde la lista, la misma pantalla unificada muestra
+la status row y reemplaza el `Alert.alert` por un mensaje de error inline persistente.
+No hay cambios en backend, API ni entidades.
 
 ## Technical Context
 
@@ -85,9 +86,8 @@ frontend/
 └── src/
     └── screens/
         └── freelancer/
-            ├── CreateServiceScreen.js   # MODIFICAR: mejorar handleSaveAndPublish
-            └── EditServiceScreen.js     # MODIFICAR: reemplazar Alert por error inline en handlePublish
+            └── CreateServiceScreen.js   # MODIFICAR: unificar creación y edición con status row
 ```
 
-**Structure Decision**: Solo cambios de frontend en 2 archivos existentes.
+**Structure Decision**: Solo cambios de frontend; la edición se consolida en `CreateServiceScreen.js`.
 No se crean archivos nuevos. Backend y API layer sin cambios.

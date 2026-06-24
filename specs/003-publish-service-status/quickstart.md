@@ -35,7 +35,7 @@
 
 1. Desde "Borradores", pulsar "Editar" en el servicio del escenario anterior
 2. Seleccionar una categoría y agregar un paquete válido
-3. Pulsar **"Publicar"** (botón de estado en EditServiceScreen)
+3. Pulsar **"Publicar"** (botón de estado en la pantalla unificada de edición)
 4. **Resultado esperado**:
    - El estado del servicio cambia a "Publicado"
    - Badge actualizado a verde en pantalla de edición
@@ -52,10 +52,10 @@
 
 ---
 
-## Escenario 5: Publicar borrador incompleto desde EditServiceScreen (US3 — fallo)
+## Escenario 5: Publicar borrador incompleto desde CreateServiceScreen (US3 — fallo)
 
 1. Abrir un borrador sin categoría o sin paquetes desde "Editar"
-2. Pulsar **"Publicar"** (botón de estado en EditServiceScreen)
+2. Pulsar **"Publicar"** (botón de estado en la pantalla unificada de edición)
 3. **Resultado esperado**:
    - Aparece texto de error **inline** (no un Alert emergente) indicando que el servicio permanece como borrador y los campos faltantes
    - El badge de estado sigue mostrando "Borrador"

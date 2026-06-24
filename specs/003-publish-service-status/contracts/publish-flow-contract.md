@@ -33,18 +33,20 @@ Los valores posibles en `missing`:
 
 ## Frontend: Contrato de UX por pantalla
 
-### CreateServiceScreen — handleSaveAndPublish
+### CreateServiceScreen — modo creación
 
 | Paso | Acción | Resultado esperado en UI |
 |------|--------|--------------------------|
 | 1 | `createService(payload)` falla | Mostrar error genérico; NO navegar |
 | 2 | `createService` ok, `publishService` ok | Navegar a lista (`navigation.goBack()`) |
 | 3 | `createService` ok, `publishService` falla (422) | Mostrar mensaje: "Tu servicio fue guardado como borrador. Revisá los campos faltantes: {missing.join(', ')}." + `navigation.goBack()` |
-| 4 | `createService` ok, `publishService` falla (otro error) | Mostrar error genérico + `navigation.goBack()` |
+| 4 | `createService` ok, `publishService` falla (otro error) | Mostrar mensaje: "Tu servicio fue guardado como borrador. Ocurrió un error al publicarlo." + `navigation.goBack()` |
 
-> En el paso 3 y 4, el borrador YA está en el servidor. Navegar a la lista permite al usuario verlo y editarlo.
+> En el paso 3 y 4, el borrador YA está en el servidor. Navegar a la lista permite al usuario verlo; al reabrirlo desde la lista, la misma pantalla muestra la status row para continuar la edición.
 
-### EditServiceScreen — handlePublish
+### CreateServiceScreen — modo edición
+
+La misma pantalla se reutiliza cuando `route.params.serviceId` existe. En ese caso la status row es visible; en modo creación permanece oculta.
 
 | Acción | Resultado esperado en UI |
 |--------|--------------------------|

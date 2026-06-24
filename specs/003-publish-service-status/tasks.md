@@ -6,7 +6,7 @@
 
 **Tests**: No solicitados. Validación manual via `quickstart.md`.
 
-**Organization**: Tareas agrupadas por historia de usuario. Solo 2 archivos de frontend se modifican; el backend no cambia.
+**Organization**: Tareas agrupadas por historia de usuario. La edición se consolida en `CreateServiceScreen.js`; el backend no cambia.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -20,7 +20,7 @@
 **Purpose**: Verificación del estado actual de los archivos a modificar.
 
 - [x] T001 Verificar el flujo `handleSaveAndPublish` en `frontend/src/screens/freelancer/CreateServiceScreen.js` y confirmar que `createService` se llama antes que `publishService`
-- [x] T002 Verificar el flujo `handlePublish` en `frontend/src/screens/freelancer/EditServiceScreen.js` y confirmar que usa `Alert.alert` para errores de publicación
+- [x] T002 Verificar el flujo `handlePublish` en `frontend/src/screens/freelancer/CreateServiceScreen.js` en modo edición y confirmar que usa `Alert.alert` solo para errores no relacionados con publicación
 
 **Checkpoint**: Comportamiento actual confirmado — implementación puede comenzar.
 
@@ -63,18 +63,18 @@ No hay prerequisitos bloqueantes: las dos historias afectan archivos distintos y
 
 ---
 
-## Phase 5: User Story 3 — Publicar borrador existente desde EditServiceScreen (Priority: P3)
+## Phase 5: User Story 3 — Publicar borrador existente desde CreateServiceScreen (Priority: P3)
 
-**Goal**: Al publicar desde la pantalla de edición de un borrador, los errores de publicación se muestran como texto inline (no Alert emergente) indicando que el servicio permanece como borrador y cuáles campos faltan.
+**Goal**: Al publicar desde la pantalla unificada de edición de un borrador, los errores de publicación se muestran como texto inline (no Alert emergente) indicando que el servicio permanece como borrador y cuáles campos faltan.
 
-**Independent Test**: Abrir un borrador incompleto en EditServiceScreen, pulsar "Publicar". Verificar que aparece texto de error inline (no Alert) con los campos faltantes y el badge de estado sigue mostrando "Borrador". (`quickstart.md` Escenarios 4 y 5)
+**Independent Test**: Abrir un borrador incompleto en CreateServiceScreen con `serviceId`, pulsar "Publicar". Verificar que aparece texto de error inline (no Alert) con los campos faltantes y el badge de estado sigue mostrando "Borrador". (`quickstart.md` Escenarios 4 y 5)
 
 ### Implementación US3
 
-- [x] T006 [P] [US3] En `frontend/src/screens/freelancer/EditServiceScreen.js`, agregar estado `publishError` (string | null) inicializado en `null`
-- [x] T007 [US3] En `frontend/src/screens/freelancer/EditServiceScreen.js`, modificar `handlePublish` para: limpiar `publishError` al inicio; en caso de fallo (422) setear `publishError` con "El servicio permanece como borrador. Campos faltantes: {missing.join(', ')}."; en caso de otro error setear `publishError` con el mensaje genérico del servidor o "Error al intentar publicar el servicio."
-- [x] T008 [US3] En `frontend/src/screens/freelancer/EditServiceScreen.js`, agregar renderizado del `publishError` como texto inline (estilo rojo) debajo del bloque de estado (`statusRow`), visible solo cuando `publishError` no es null — eliminar el `Alert.alert` del `catch` de `handlePublish`
-- [x] T009 [US3] En `frontend/src/screens/freelancer/EditServiceScreen.js`, limpiar `publishError` cuando `handlePublish` tiene éxito (setear `publishError(null)`) y también al inicio de cada intento de publicación
+- [x] T006 [P] [US3] En `frontend/src/screens/freelancer/CreateServiceScreen.js`, agregar estado `publishError` (string | null) inicializado en `null`
+- [x] T007 [US3] En `frontend/src/screens/freelancer/CreateServiceScreen.js`, modificar `handlePublish` para: limpiar `publishError` al inicio; en caso de fallo (422) setear `publishError` con "El servicio permanece como borrador. Campos faltantes: {missing.join(', ')}."; en caso de otro error setear `publishError` con el mensaje genérico del servidor o "Error al intentar publicar el servicio."
+- [x] T008 [US3] En `frontend/src/screens/freelancer/CreateServiceScreen.js`, agregar renderizado del `publishError` como texto inline (estilo rojo) debajo del bloque de estado (`statusRow`), visible solo cuando `publishError` no es null — eliminar el `Alert.alert` del `catch` de `handlePublish`
+- [x] T009 [US3] En `frontend/src/screens/freelancer/CreateServiceScreen.js`, limpiar `publishError` cuando `handlePublish` tiene éxito (setear `publishError(null)`) y también al inicio de cada intento de publicación
 
 **Checkpoint**: US3 verificada — error de publicación desde edición muestra texto inline sin Alert. Probar con `quickstart.md` Escenarios 4 y 5.
 
@@ -83,7 +83,7 @@ No hay prerequisitos bloqueantes: las dos historias afectan archivos distintos y
 ## Phase 6: Polish & Validaciones cruzadas
 
 - [x] T010 [P] Ejecutar `quickstart.md` Escenario 6 (error de red): verificar que ningún flujo cambia el estado del servicio sin respuesta 200 del servidor
-- [x] T011 [P] Verificar que el error `publishError` en `EditServiceScreen.js` se limpia al navegar fuera y volver a la pantalla (el `useEffect` inicial recarga el servicio)
+- [x] T011 [P] Verificar que el error `publishError` en `CreateServiceScreen.js` se limpia al navegar fuera y volver a la pantalla (la carga inicial recarga el servicio)
 - [x] T012 Ejecutar todos los escenarios de `quickstart.md` (1–6) y registrar resultados; corregir cualquier desviación encontrada
 
 ---
@@ -112,7 +112,7 @@ No hay prerequisitos bloqueantes: las dos historias afectan archivos distintos y
 ```text
 # Tras Phase 1 (T001 + T002 en paralelo):
 Developer A: US2 en CreateServiceScreen.js (T004, T005)
-Developer B: US3 en EditServiceScreen.js (T006, T007, T008, T009)
+Developer B: US3 en CreateServiceScreen.js (T006, T007, T008, T009)
 ```
 
 ---
@@ -138,7 +138,7 @@ Developer B: US3 en EditServiceScreen.js (T006, T007, T008, T009)
 
 ## Notes
 
-- Solo 2 archivos se modifican: `CreateServiceScreen.js` y `EditServiceScreen.js`
+- La edición se resuelve dentro de `CreateServiceScreen.js`
 - El backend no cambia; `ServiceCard.handlePublish` tampoco cambia
 - [P] en T001/T002 y T006 indica paralelismo real por archivo distinto
 - Validación manual con `quickstart.md` es suficiente (no hay tests automatizados solicitados)

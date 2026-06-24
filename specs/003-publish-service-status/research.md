@@ -19,11 +19,11 @@ El campo `status` (`DRAFT` / `PUBLISHED`) existe en el store y es retornado por 
 3. **Gap**: el mensaje de error no informa al usuario que el borrador YA fue guardado
 4. **Gap**: el usuario permanece en la pantalla de creación sin feedback de que hay un borrador en la lista
 
-**`EditServiceScreen.js`** (flujo "Publicar" desde edición):
-1. El servicio ya está guardado (via `PUT`) antes de intentar publicar
-2. Llama `publishService(serviceId)` → si falla, muestra `Alert.alert` con los campos faltantes
-3. **Gap**: el error se muestra como alerta emergente, no como texto inline persistente
-4. **Gap**: el estado visual (`isDraft`) en la pantalla no se actualiza tras publicación fallida (aunque permanece en DRAFT, lo cual es correcto)
+**`CreateServiceScreen.js`** (flujo unificado de creación y edición):
+1. En modo creación, llama `createService(payload)` y luego `publishService(service.id)`
+2. Si la publicación falla, muestra un mensaje inline/alert según el contexto y navega a la lista para que el borrador quede visible
+3. En modo edición (`route.params.serviceId`), precarga el servicio, muestra la status row y permite publicar/despublicar sin salir de la pantalla
+4. **Gap resuelto**: ya no existe una pantalla separada de edición; la misma vista maneja `statusRow`, errores inline y multimedia en modo edición
 
 **`ServiceCard.js`** — ya implementado:
 - Badge "Borrador" (naranja) / "Publicado" (verde) ✅
@@ -50,7 +50,7 @@ El campo `status` (`DRAFT` / `PUBLISHED`) existe en el store y es retornado por 
 
 ---
 
-## Decision 2: Qué cambiar en `EditServiceScreen`
+## Decision 2: Qué cambiar en la pantalla unificada
 
 **Decision**: Cuando `publishService` falla en `handlePublish`:
 - Reemplazar `Alert.alert` por texto de error inline (debajo del botón de estado) indicando "El servicio permanece como borrador. Campos faltantes: {lista}."
@@ -68,7 +68,7 @@ El campo `status` (`DRAFT` / `PUBLISHED`) existe en el store y es retornado por 
 
 **Decision**: `ServiceCard.handlePublish` ya llama `publishService` y muestra `Alert.alert` con los campos faltantes. No se cambia la lógica; es un caso de publicación desde lista donde el usuario ya ve el badge de estado y el Alert es aceptable.
 
-**Rationale**: El contexto de la card de lista no tiene espacio inline para mensajes de error expandidos. El Alert es suficiente para comunicar el rechazo sin cambios de estado (el servicio sigue en DRAFT). El botón "Editar" lleva al usuario a `EditServiceScreen` donde puede ver y corregir.
+**Rationale**: El contexto de la card de lista no tiene espacio inline para mensajes de error expandidos. El Alert es suficiente para comunicar el rechazo sin cambios de estado (el servicio sigue en DRAFT). El botón "Editar" lleva al usuario a `CreateServiceScreen` en modo edición, donde puede ver y corregir.
 
 ---
 
@@ -77,5 +77,5 @@ El campo `status` (`DRAFT` / `PUBLISHED`) existe en el store y es retornado por 
 | Archivo | Cambio |
 |---------|--------|
 | `frontend/src/screens/freelancer/CreateServiceScreen.js` | Mejorar mensaje de error en `handleSaveAndPublish`: indicar que el borrador fue guardado + `navigation.goBack()` |
-| `frontend/src/screens/freelancer/EditServiceScreen.js` | Reemplazar `Alert.alert` por error inline en `handlePublish` |
+| `frontend/src/screens/freelancer/CreateServiceScreen.js` | Unificar el flujo de edición, agregar `statusRow` y mostrar `publishError` inline en modo edición |
 | Resto del código | Sin cambios |
