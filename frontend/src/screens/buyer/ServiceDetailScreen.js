@@ -1,15 +1,68 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   Image,
+  FlatList,
+  Dimensions,
   ActivityIndicator,
 } from 'react-native';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 import { getService, getCategories } from '../../api/servicesApi';
+import { API_BASE_URL } from '../../api/config';
 
 const PRIMARY = '#7b1fa2';
+
+function ImageCarousel({ images }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const onScroll = (e) => {
+    const index = Math.round(e.nativeEvent.contentOffset.x / SCREEN_WIDTH);
+    setActiveIndex(index);
+  };
+
+  return (
+    <View style={carouselStyles.wrapper}>
+      <FlatList
+        data={images}
+        keyExtractor={(item) => item.id}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        renderItem={({ item }) => (
+          <Image
+            source={{ uri: `${API_BASE_URL}${item.imageUrl}` }}
+            style={carouselStyles.image}
+            resizeMode="cover"
+          />
+        )}
+      />
+      {images.length > 1 && (
+        <View style={carouselStyles.dots}>
+          {images.map((_, i) => (
+            <View
+              key={i}
+              style={[carouselStyles.dot, i === activeIndex && carouselStyles.dotActive]}
+            />
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
+const carouselStyles = StyleSheet.create({
+  wrapper: { marginBottom: 20 },
+  image: { width: SCREEN_WIDTH - 40, height: 300, borderRadius: 10 },
+  dots: { flexDirection: 'row', justifyContent: 'center', marginTop: 8, gap: 6 },
+  dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#ccc' },
+  dotActive: { backgroundColor: PRIMARY, width: 18 },
+});
 
 export default function ServiceDetailScreen({ route }) {
   const { serviceId } = route.params;
@@ -61,16 +114,7 @@ export default function ServiceDetailScreen({ route }) {
       <Text style={styles.description}>{service.description}</Text>
 
       {service.images && service.images.length > 0 && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageRow}>
-          {service.images.map((img) => (
-            <Image
-              key={img.id}
-              source={{ uri: img.imageUrl }}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          ))}
-        </ScrollView>
+        <ImageCarousel images={service.images} />
       )}
 
       {service.packages && service.packages.length > 0 && (
