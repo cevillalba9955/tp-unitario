@@ -14,7 +14,7 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="BuyerLogin">
           <Stack.Screen
             name="Login"
             component={LoginScreen}
@@ -38,7 +38,11 @@ export default function App() {
           <Stack.Screen
             name="BuyerCatalog"
             component={BuyerCatalogScreen}
-            options={{ title: 'Catálogo' }}
+            options={{
+              title: 'Catálogo',
+              headerStyle: { backgroundColor: '#7b1fa2' },
+              headerTintColor: '#fff',
+            }}
           />
         </Stack.Navigator>
       </NavigationContainer>

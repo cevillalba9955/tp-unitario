@@ -6,9 +6,8 @@
 - App React Native iniciada: `cd frontend && npx expo start`
 - Cuenta de comprador existente en el sistema (ver credenciales de demo)
 
-**Credenciales de demo** (verificar con el backend):
+**Credenciales de demo**:
 - Email: `buyer@demo.com` / Contraseña: `demo1234`
-- (Alternativa: `freelancer@demo.com` / `demo1234` si el backend no distingue roles en login)
 
 ---
 

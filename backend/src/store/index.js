@@ -29,6 +29,7 @@ seedCategories.forEach((cat) => {
 
 const seedUsers = [
   { id: 'user-demo-001', email: 'freelancer@demo.com', password: 'demo1234', role: 'freelancer' },
+  { id: 'user-demo-002', email: 'buyer@demo.com', password: 'demo1234', role: 'buyer' },
 ];
 
 seedUsers.forEach(({ id, email, password, role }) => {

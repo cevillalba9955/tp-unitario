@@ -4,7 +4,7 @@ import {
   ActivityIndicator, StyleSheet, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { login } from '../../api/servicesApi';
-import { setToken } from '../../api/config';
+import { setToken, setRole } from '../../api/config';
 
 export default function BuyerLoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -36,8 +36,9 @@ export default function BuyerLoginScreen({ navigation }) {
 
     setLoading(true);
     try {
-      const { token } = await login(trimmedEmail, password);
+      const { token, role } = await login(trimmedEmail, password, 'buyer');
       setToken(token);
+      setRole(role);
       navigation.replace('BuyerCatalog');
     } catch (e) {
       if (!e.response) {
@@ -87,6 +88,10 @@ export default function BuyerLoginScreen({ navigation }) {
             : <Text style={styles.btnText}>Iniciar sesión</Text>
           }
         </TouchableOpacity>
+          <Text style={styles.hint}>Demo: buyer@demo.com / demo1234</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.switchLink}>
+          <Text style={styles.switchText}>¿Sos freelancer? Ingresá aquí</Text>
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
@@ -95,11 +100,14 @@ export default function BuyerLoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f0f4f8', justifyContent: 'center', padding: 24 },
   card: { backgroundColor: '#fff', borderRadius: 12, padding: 24, elevation: 3, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 8 },
-  title: { fontSize: 26, fontWeight: '800', color: '#1976d2', textAlign: 'center', marginBottom: 4 },
+  title: { fontSize: 26, fontWeight: '800', color: '#7b1fa2', textAlign: 'center', marginBottom: 4 },
   subtitle: { fontSize: 14, color: '#666', textAlign: 'center', marginBottom: 24 },
   label: { fontSize: 13, color: '#555', marginBottom: 4 },
   input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 10, fontSize: 14, marginBottom: 14, backgroundColor: '#fafafa' },
   error: { color: '#e53935', fontSize: 13, marginBottom: 12 },
-  btn: { backgroundColor: '#1976d2', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 4 },
+  btn: { backgroundColor: '#7b1fa2', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 4 },
   btnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  switchLink: { marginTop: 16, alignItems: 'center' },
+  switchText: { fontSize: 13, color: '#7b1fa2', textDecorationLine: 'underline' },
+  hint: { fontSize: 12, color: '#999', textAlign: 'center', marginTop: 8 },
 });
