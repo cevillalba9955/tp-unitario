@@ -18,4 +18,21 @@ function auth(req, res, next) {
   }
 }
 
+function optionalAuth(req, res, next) {
+  const header = req.headers.authorization;
+  if (!header || !header.startsWith('Bearer ')) {
+    req.user = null;
+    return next();
+  }
+  const token = header.slice(7);
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    req.user = { userId: payload.userId || payload.sub || payload.id };
+  } catch {
+    req.user = null;
+  }
+  next();
+}
+
 module.exports = auth;
+module.exports.optionalAuth = optionalAuth;

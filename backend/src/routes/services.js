@@ -1,6 +1,7 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const auth = require('../middleware/auth');
+const { optionalAuth } = require('../middleware/auth');
 const store = require('../store');
 const { validatePublish, validateFields } = require('../validators/serviceValidator');
 
@@ -124,11 +125,12 @@ router.post('/', auth, (req, res) => {
 });
 
 // GET /api/v1/services/:id
-router.get('/:id', auth, (req, res) => {
+router.get('/:id', optionalAuth, (req, res) => {
   const service = store.services.get(req.params.id);
   if (!service) return res.status(404).json({ error: 'NOT_FOUND', message: 'Servicio no encontrado.' });
 
-  if (service.status === 'DRAFT' && service.freelancerId !== req.user.userId) {
+  const ownerId = req.user?.userId;
+  if (service.status === 'DRAFT' && service.freelancerId !== ownerId) {
     return res.status(403).json({ error: 'FORBIDDEN', message: 'Acceso denegado.' });
   }
 
