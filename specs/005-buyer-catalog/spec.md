@@ -8,6 +8,12 @@
 
 **Input**: User description: "catálogo de comprador"
 
+## Clarifications
+
+### Session 2026-06-24
+
+- Q: ¿El catálogo requiere autenticación para ser accedido? → A: No. El catálogo es público (Principio II: "navegable y filtrable sin autenticación previa"). FR-010 actualizado: la autenticación solo se exige para acciones de escritura (contratar). El redirect guard basado en token fue eliminado del frontend y el middleware `auth` fue retirado del endpoint `GET /api/v1/services`.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Explorar el catálogo de servicios publicados (Priority: P1)
@@ -79,7 +85,7 @@ si las hay.
 - ¿Qué ocurre si el catálogo tiene muchos servicios? La lista debe ser desplazable (scroll) sin degradar la experiencia.
 - ¿Qué ocurre si el servidor no responde al cargar el catálogo? Se muestra un mensaje de error con opción de reintentar.
 - ¿Qué pasa si un servicio se despublica mientras el comprador está en su detalle? Al volver al catálogo, ese servicio ya no aparece en la lista.
-- ¿Qué ocurre si el comprador no está autenticado e intenta acceder al catálogo directamente? Es redirigido a la pantalla de login del Comprador.
+- ¿Qué ocurre si el usuario no está autenticado y accede al catálogo? El catálogo es público y se muestra normalmente; la autenticación solo es requerida al intentar contratar un servicio (fuera del scope de esta feature).
 
 ## Requirements *(mandatory)*
 
@@ -94,7 +100,7 @@ si las hay.
 - **FR-007**: El sistema DEBE mostrar un mensaje informativo cuando no haya servicios disponibles (sin filtro o con filtro aplicado).
 - **FR-008**: El comprador DEBE poder acceder al detalle de un servicio tocando su ítem en la lista.
 - **FR-009**: La pantalla de detalle DEBE mostrar: título, descripción completa, categoría, paquetes de contratación (nombre, alcance, precio y plazo) e imágenes del servicio.
-- **FR-010**: Si el comprador no está autenticado e intenta acceder al catálogo, el sistema DEBE redirigirlo a la pantalla de login del Comprador.
+- **FR-010**: El catálogo de servicios es accesible sin autenticación previa, en cumplimiento del Principio II de la Constitución. La autenticación solo es requerida para acciones de escritura (contratación, favoritos).
 - **FR-011**: Si el servidor no responde al cargar el catálogo, el sistema DEBE mostrar un mensaje de error con opción de reintentar.
 
 ### Key Entities
@@ -107,17 +113,17 @@ si las hay.
 
 ### Measurable Outcomes
 
-- **SC-001**: El catálogo carga y muestra los servicios publicados en menos de 3 segundos tras el login.
+- **SC-001**: El catálogo carga y muestra los servicios publicados en menos de 3 segundos desde que se abre la pantalla.
 - **SC-002**: El 100% de los servicios en estado "Borrador" son excluidos del catálogo visible para el Comprador.
 - **SC-003**: Al aplicar un filtro de categoría, el 100% de los servicios mostrados pertenecen a esa categoría.
 - **SC-004**: El comprador puede navegar desde el catálogo al detalle de un servicio y volver, conservando el filtro aplicado.
 
 ## Assumptions
 
-- El backend ya cuenta con un endpoint público de servicios publicados (o filtrable por estado) accesible con el token del Comprador.
-- El backend ya cuenta con un endpoint de categorías utilizable para construir el filtro.
+- El backend no expone aún un endpoint de catálogo público; debe crearse `GET /api/v1/services` como parte de esta feature (sin middleware de autenticación).
+- El backend ya cuenta con `GET /api/v1/categories` utilizable para construir el filtro.
 - El catálogo solo muestra servicios propios de la plataforma; no se integran fuentes externas.
 - La paginación no es requerida en este scope: se muestran todos los servicios publicados en una lista con scroll.
 - No se requiere búsqueda por texto libre en este scope; solo filtrado por categoría.
-- El acceso al catálogo requiere autenticación como Comprador (FR-010); el catálogo público sin login es una feature futura.
-- Las imágenes del servicio se muestran en el detalle si existen; si no hay imágenes, el campo es omitido sin error.
+- El catálogo es accesible sin autenticación (Principio II). El login del Comprador es necesario para contratar, no para navegar.
+- Las imágenes del servicio se muestran en el detalle si existen; la clave `images` siempre es un array (posiblemente vacío) en la respuesta de la API.

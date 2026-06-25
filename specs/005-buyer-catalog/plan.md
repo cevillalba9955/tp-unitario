@@ -48,7 +48,7 @@ con filtro por categoría, más una nueva `ServiceDetailScreen` para el Comprado
 | I. Separación de Roles | ✅ PASS | Pantallas del Comprador en `screens/buyer/`; Freelancer intacto |
 | II. Catálogo como Núcleo | ✅ PASS | Esta feature implementa directamente el catálogo navegable y filtrable por categorías |
 | III. Integridad de Servicios | ✅ PASS | Solo servicios PUBLISHED visibles (FR-003); borradores excluidos server-side |
-| IV. Seguridad y RBAC | ✅ PASS | Endpoint requiere auth; token del Comprador necesario |
+| IV. Seguridad y RBAC | ✅ PASS | Catálogo público sin auth (lectura, Principio II). Auth requerida solo para escritura (contratar). Borradores excluidos server-side. |
 | V. Entrega Incremental | ✅ PASS | US1 (listar) demostrable sin US2 (filtrar) ni US3 (detalle) |
 | Stack — Docker backend | ✅ PASS | El backend sigue corriendo en Docker; solo se agrega una ruta |
 | Stack — In-memory only | ✅ PASS | Sin nueva persistencia; el store existente es suficiente |
@@ -57,9 +57,9 @@ con filtro por categoría, más una nueva `ServiceDetailScreen` para el Comprado
 
 | Principio | Estado | Verificación |
 |-----------|--------|-------------|
-| II. Catálogo — navegable y filtrable | ✅ PASS | `GET /api/v1/services?categoryId=X` implementa filtrado server-side |
+| II. Catálogo — navegable y filtrable sin auth | ✅ PASS | `GET /api/v1/services` es público (sin `auth` middleware); `?categoryId=X` filtra server-side |
 | III. Integridad — solo PUBLISHED visible | ✅ PASS | Filtro `status=PUBLISHED` forzado en el endpoint |
-| IV. RBAC — borradores protegidos | ✅ PASS | Endpoint excluye DRAFT server-side; sin lógica client-only |
+| IV. RBAC — borradores protegidos sin exponer auth | ✅ PASS | Endpoint excluye DRAFT server-side; sin lógica client-only |
 
 **Resultado**: Sin violaciones. Complexity Tracking omitido.
 

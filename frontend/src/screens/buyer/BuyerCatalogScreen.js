@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
-import { setToken, getToken } from '../../api/config';
+import { setToken } from '../../api/config';
 import { getCatalog, getCategories } from '../../api/servicesApi';
 
 const PRIMARY = '#7b1fa2';
@@ -35,12 +35,6 @@ export default function BuyerCatalogScreen({ navigation }) {
       ),
     });
   }, [navigation, handleLogout]);
-
-  useEffect(() => {
-    if (!getToken()) {
-      navigation.replace('BuyerLogin');
-    }
-  }, []);
 
   const loadData = useCallback(async (categoryId) => {
     setLoading(true);

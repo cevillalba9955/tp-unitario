@@ -19,8 +19,8 @@ function getServiceImages(serviceId) {
     .map(({ imageBuffer, ...meta }) => ({ ...meta, imageUrl: `/api/v1/images/${meta.id}` }));
 }
 
-// GET /api/v1/services (catálogo para compradores — solo PUBLISHED)
-router.get('/', auth, (req, res) => {
+// GET /api/v1/services (catálogo público — solo PUBLISHED, sin autenticación requerida)
+router.get('/', (req, res) => {
   const { categoryId } = req.query;
 
   let services = Array.from(store.services.values()).filter(

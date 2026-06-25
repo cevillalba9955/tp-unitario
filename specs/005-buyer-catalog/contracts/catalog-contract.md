@@ -11,9 +11,9 @@ Ref: [data-model.md](../data-model.md) · [research.md](../research.md)
 
 ### `GET /api/v1/services`
 
-Devuelve la lista de servicios publicados. Requiere autenticación.
+Devuelve la lista de servicios publicados. **No requiere autenticación** (Principio II de la Constitución).
 
-**Authorization**: `Bearer <token>` (cualquier rol autenticado)
+**Authorization**: Ninguna requerida.
 
 **Query Parameters**:
 
