@@ -25,7 +25,8 @@
       "PowerShell(npm view \"react-native-gesture-handler\" version 2>&1)",
       "PowerShell(npm view \"@react-navigation/native\" version 2>&1)",
       "PowerShell(npm view \"@react-navigation/stack\" version 2>&1)",
-      "PowerShell(New-Item *)"
+      "PowerShell(New-Item *)",
+      "Bash(git push *)"
     ]
   }
 }

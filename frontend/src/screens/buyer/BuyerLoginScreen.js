@@ -98,6 +98,10 @@ export default function BuyerLoginScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.switchLink}>
           <Text style={styles.switchText}>¿Sos freelancer? Ingresá aquí</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.switchLink}>
+          <Text style={styles.switchText}>Ver catálogo público</Text>
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
