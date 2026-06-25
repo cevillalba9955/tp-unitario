@@ -32,7 +32,7 @@ con filtro por categoría, más una nueva `ServiceDetailScreen` para el Comprado
 - Sin cambios en el modelo de datos existente
 - Sin paginación en este scope (lista completa con scroll)
 - Sin búsqueda por texto libre
-- Acceso al catálogo requiere autenticación (token del Comprador)
+- El catálogo es público (sin auth); autenticación requerida solo para acciones de escritura (contratar)
 - `GET /api/v1/services/my` no se toca; el nuevo endpoint es `GET /api/v1/services`
 
 **Scale/Scope**: TP universitario — 1 ruta nueva en backend + 2 pantallas nuevas + 1 archivo de API actualizado
@@ -84,7 +84,7 @@ specs/005-buyer-catalog/
 backend/
 └── src/
     └── routes/
-        └── services.js             # MODIFICAR: agregar GET / (catálogo público autenticado)
+        └── services.js             # MODIFICAR: agregar GET / (catálogo público, sin auth)
 
 frontend/
 ├── src/

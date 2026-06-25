@@ -34,9 +34,9 @@
 **⚠️ CRÍTICO**: Ninguna historia puede comenzar hasta completar esta fase.
 
 - [x] T003 Agregar endpoint `GET /api/v1/services` (catálogo) en `backend/src/routes/services.js` — registrar la ruta ANTES de `GET /my`; filtrar `status=PUBLISHED`; calcular `minPrice` y `categoryName` server-side; soportar query param opcional `?categoryId=X`
-- [x] T004 Agregar función `getCatalog(categoryId?)` en `frontend/src/api/servicesApi.js` — llama a `GET /api/v1/services` con token auth; acepta `categoryId` opcional
+- [x] T004 Agregar función `getCatalog(categoryId?)` en `frontend/src/api/servicesApi.js` — llama a `GET /api/v1/services` sin requerir token (endpoint público); envía token solo si está disponible; acepta `categoryId` opcional
 
-**Checkpoint**: El endpoint devuelve servicios publicados con `minPrice` y `categoryName`. `getCatalog()` disponible en el cliente.
+**Checkpoint**: El endpoint devuelve servicios publicados con `minPrice` y `categoryName`. `getCatalog()` disponible en el cliente. Nota: `getService(id)` ya existía en `servicesApi.js` desde feature 003; T011 depende de ella sin necesidad de crearla.
 
 ---
 
@@ -50,7 +50,7 @@
 
 - [x] T005 [US1] Reemplazar `BuyerCatalogScreen` placeholder con pantalla funcional en `frontend/src/screens/buyer/BuyerCatalogScreen.js` — cargar servicios con `getCatalog()` al montar; mostrar `ActivityIndicator` durante carga; mostrar `FlatList` con ítems (título, categoría, precio mínimo); mostrar mensaje "Aún no hay servicios disponibles." cuando lista vacía; mostrar mensaje de error con botón "Reintentar" si falla la llamada (FR-011)
 - [x] T006 [US1] Verificar en `frontend/App.js` que `BuyerCatalog` sigue registrado con header morado y que el logout desde el catálogo redirige a `BuyerLogin` con `navigation.replace`
-- [x] T007 [US1] Validar redirección sin auth (FR-010): verificar que `BuyerCatalogScreen` llama a `navigation.replace('BuyerLogin')` si `getToken()` es null al montar
+- [x] T007 [US1] Validar acceso público (FR-010): verificar que `BuyerCatalogScreen` NO redirige si `getToken()` es null — el catálogo carga normalmente sin token; el header muestra "Iniciar sesión" en lugar de "Cerrar sesión"
 
 **Checkpoint**: US1 funcional y testeable de forma independiente — el comprador puede ver el catálogo.
 
@@ -80,7 +80,7 @@
 
 ### Implementation
 
-- [x] T011 [US3] Crear `ServiceDetailScreen` en `frontend/src/screens/buyer/ServiceDetailScreen.js` — recibe `route.params.serviceId`; carga detalle con `getService(serviceId)` al montar; muestra `ActivityIndicator` durante carga; muestra título, descripción, nombre de categoría; lista de paquetes con nombre, alcance, precio y plazo; galería horizontal de imágenes si `images.length > 0`; mensaje de error si falla la carga; tema morado (#7b1fa2) coherente con las demás pantallas del comprador
+- [x] T011 [US3] Crear `ServiceDetailScreen` en `frontend/src/screens/buyer/ServiceDetailScreen.js` — recibe `route.params.serviceId`; carga detalle con `getService(serviceId)` al montar; muestra `ActivityIndicator` durante carga; muestra título, descripción, nombre de categoría; lista de paquetes con nombre, alcance, precio y plazo; galería horizontal desplazable (`FlatList` horizontal con paginación) si `images.length > 0`; mensaje de error si falla la carga; tema morado (#7b1fa2) coherente con las demás pantallas del comprador
 - [x] T012 [US3] Registrar `ServiceDetail` en el stack de `frontend/App.js` con el componente `ServiceDetailScreen`; header: `title: 'Detalle del Servicio'`, `headerStyle backgroundColor '#7b1fa2'`, `headerTintColor '#fff'`
 - [x] T013 [US3] Hacer que cada ítem del catálogo en `BuyerCatalogScreen` sea toqueable y navegue a `ServiceDetail` con `navigation.navigate('ServiceDetail', { serviceId: item.id })` (`frontend/src/screens/buyer/BuyerCatalogScreen.js`)
 - [x] T014 [US3] Verificar preservación de filtro: como el estado local de `BuyerCatalogScreen` se mantiene al hacer `navigate` (push) + `goBack()`, confirmar que el `selectedCategory` no se resetea al volver del detalle
@@ -94,7 +94,7 @@
 **Purpose**: Mejoras que afectan múltiples historias o la experiencia global.
 
 - [x] T015 [P] Verificar coherencia visual entre `BuyerLoginScreen`, `BuyerCatalogScreen` y `ServiceDetailScreen`: mismo color primario (#7b1fa2), mismo estilo de headers y botones
-- [ ] T016 Ejecutar todos los escenarios de `quickstart.md` (Escenarios 0–5) en Expo Go y corregir cualquier desviación
+- [ ] T016 Ejecutar todos los escenarios de `quickstart.md` (Escenarios 0–5) en Expo Go y corregir cualquier desviación; para SC-001 medir manualmente el tiempo de carga del catálogo en el Escenario 1 y confirmar que es menor a 3 segundos con Docker corriendo
 - [x] T017 [P] Verificar en `backend/src/routes/services.js` que la nueva ruta `GET /` no interfiere con rutas existentes (`/my`, `/:id`, `/:id/publish`, `/:id/unpublish`)
 
 ---

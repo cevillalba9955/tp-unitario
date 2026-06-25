@@ -57,12 +57,20 @@ export default function BuyerCatalogScreen({ navigation }) {
     setLoading(true);
     setError(null);
     try {
-      const [catalogData, categoriesData] = await Promise.all([
+      const [catalogResult, categoriesResult] = await Promise.allSettled([
         getCatalog(categoryId),
         getCategories(),
       ]);
-      setServices(catalogData);
-      setCategories(categoriesData);
+
+      if (catalogResult.status === 'rejected') {
+        throw catalogResult.reason;
+      }
+      setServices(catalogResult.value);
+
+      if (categoriesResult.status === 'fulfilled') {
+        setCategories(categoriesResult.value);
+      }
+      // Si categories falla, el filtro se oculta pero el catálogo sigue visible
     } catch (e) {
       setError('No se pudo cargar el catálogo. Verificá tu conexión.');
     } finally {

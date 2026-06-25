@@ -18,7 +18,7 @@
 
 ### User Story 1 - Explorar el catálogo de servicios publicados (Priority: P1)
 
-El comprador autenticado accede a la pantalla de catálogo y ve una lista de todos
+El comprador (autenticado o no) accede a la pantalla de catálogo y ve una lista de todos
 los servicios en estado "Publicado". Puede desplazarse por el listado y ver la
 información básica de cada servicio (título, categoría, precio mínimo).
 
@@ -91,7 +91,7 @@ si las hay.
 
 ### Functional Requirements
 
-- **FR-001**: El sistema DEBE mostrar al comprador autenticado una lista de todos los servicios en estado "Publicado".
+- **FR-001**: El sistema DEBE mostrar a cualquier usuario (autenticado o no) una lista de todos los servicios en estado "Publicado" (ver FR-010).
 - **FR-002**: Cada ítem de la lista DEBE mostrar: título del servicio, nombre de la categoría y precio del paquete más económico.
 - **FR-003**: Los servicios en estado "Borrador" NO DEBEN ser visibles en el catálogo del Comprador.
 - **FR-004**: El sistema DEBE permitir al comprador filtrar el catálogo por categoría.
