@@ -14,7 +14,7 @@ export default function BuyerLoginScreen({ navigation }) {
 
   useEffect(() => {
     if (getToken()) {
-      navigation.replace('BuyerCatalog');
+      navigation.goBack();
     }
   }, []);
 
@@ -45,7 +45,7 @@ export default function BuyerLoginScreen({ navigation }) {
       const { token, role } = await login(trimmedEmail, password, 'buyer');
       setToken(token);
       setRole(role);
-      navigation.replace('BuyerCatalog');
+      navigation.goBack();
     } catch (e) {
       if (!e.response) {
         setError('Error al iniciar sesión. Verificá tu conexión.');

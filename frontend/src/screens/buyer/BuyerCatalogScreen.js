@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -8,7 +9,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
-import { setToken } from '../../api/config';
+import { setToken, getToken } from '../../api/config';
 import { getCatalog, getCategories } from '../../api/servicesApi';
 
 const PRIMARY = '#7b1fa2';
@@ -19,22 +20,38 @@ export default function BuyerCatalogScreen({ navigation }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!getToken());
 
   const handleLogout = useCallback(() => {
     setToken(null);
-    navigation.replace('BuyerLogin');
+    setIsLoggedIn(false);
+  }, []);
+
+  const handleLogin = useCallback(() => {
+    navigation.navigate('BuyerLogin');
   }, [navigation]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => null,
-      headerRight: () => (
-        <TouchableOpacity onPress={handleLogout} style={{ marginRight: 16 }}>
-          <Text style={{ color: '#fff', fontSize: 14 }}>Cerrar sesión</Text>
-        </TouchableOpacity>
-      ),
+      headerRight: () =>
+        isLoggedIn ? (
+          <TouchableOpacity onPress={handleLogout} style={{ marginRight: 16 }}>
+            <Text style={{ color: '#fff', fontSize: 14 }}>Cerrar sesión</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={handleLogin} style={{ marginRight: 16 }}>
+            <Text style={{ color: '#fff', fontSize: 14 }}>Iniciar sesión</Text>
+          </TouchableOpacity>
+        ),
     });
-  }, [navigation, handleLogout]);
+  }, [navigation, isLoggedIn, handleLogout, handleLogin]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsLoggedIn(!!getToken());
+    }, [])
+  );
 
   const loadData = useCallback(async (categoryId) => {
     setLoading(true);
