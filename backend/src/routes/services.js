@@ -19,6 +19,35 @@ function getServiceImages(serviceId) {
     .map(({ imageBuffer, ...meta }) => ({ ...meta, imageUrl: `/api/v1/images/${meta.id}` }));
 }
 
+// GET /api/v1/services (catálogo para compradores — solo PUBLISHED)
+router.get('/', auth, (req, res) => {
+  const { categoryId } = req.query;
+
+  let services = Array.from(store.services.values()).filter(
+    (s) => s.status === 'PUBLISHED'
+  );
+
+  if (categoryId) {
+    services = services.filter((s) => s.categoryId === categoryId);
+  }
+
+  const data = services.map((s) => {
+    const pkgs = Array.from(store.packages.values()).filter((p) => p.serviceId === s.id);
+    const minPrice = pkgs.length > 0 ? Math.min(...pkgs.map((p) => p.price)) : null;
+    const category = s.categoryId ? store.categories.get(s.categoryId) : null;
+    return {
+      id: s.id,
+      title: s.title,
+      categoryId: s.categoryId,
+      categoryName: category ? category.name : null,
+      minPrice,
+      packageCount: pkgs.length,
+    };
+  });
+
+  res.json({ data });
+});
+
 // GET /api/v1/services/my
 router.get('/my', auth, (req, res) => {
   const { userId } = req.user;

@@ -1,0 +1,124 @@
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  ActivityIndicator,
+} from 'react-native';
+import { getService, getCategories } from '../../api/servicesApi';
+
+const PRIMARY = '#7b1fa2';
+
+export default function ServiceDetailScreen({ route }) {
+  const { serviceId } = route.params;
+  const [service, setService] = useState(null);
+  const [categoryName, setCategoryName] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const [svc, categories] = await Promise.all([
+          getService(serviceId),
+          getCategories(),
+        ]);
+        setService(svc);
+        if (svc.categoryId) {
+          const cat = categories.find((c) => c.id === svc.categoryId);
+          setCategoryName(cat ? cat.name : null);
+        }
+      } catch {
+        setError('No se pudo cargar el detalle del servicio.');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [serviceId]);
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={PRIMARY} />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Text style={styles.title}>{service.title}</Text>
+      {categoryName && <Text style={styles.category}>{categoryName}</Text>}
+      <Text style={styles.description}>{service.description}</Text>
+
+      {service.images && service.images.length > 0 && (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageRow}>
+          {service.images.map((img) => (
+            <Image
+              key={img.id}
+              source={{ uri: img.imageUrl }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          ))}
+        </ScrollView>
+      )}
+
+      {service.packages && service.packages.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Paquetes disponibles</Text>
+          {service.packages.map((pkg) => (
+            <View key={pkg.id} style={styles.packageCard}>
+              <View style={styles.packageHeader}>
+                <Text style={styles.packageName}>{pkg.name}</Text>
+                <Text style={styles.packagePrice}>${pkg.price}</Text>
+              </View>
+              <Text style={styles.packageScope}>{pkg.scope}</Text>
+              <Text style={styles.packageDelivery}>Entrega: {pkg.deliveryDays} días</Text>
+            </View>
+          ))}
+        </View>
+      )}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 },
+  container: { flex: 1, backgroundColor: '#f0f4f8' },
+  content: { padding: 20 },
+  title: { fontSize: 22, fontWeight: '800', color: '#1a1a2e', marginBottom: 6 },
+  category: { fontSize: 13, color: PRIMARY, fontWeight: '600', marginBottom: 12 },
+  description: { fontSize: 15, color: '#444', lineHeight: 22, marginBottom: 20 },
+  imageRow: { marginBottom: 20 },
+  image: { width: 200, height: 140, borderRadius: 8, marginRight: 10 },
+  section: { marginTop: 4 },
+  sectionTitle: { fontSize: 17, fontWeight: '700', color: '#1a1a2e', marginBottom: 12 },
+  packageCard: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 14,
+    marginBottom: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: PRIMARY,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  packageHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
+  packageName: { fontSize: 15, fontWeight: '700', color: '#1a1a2e' },
+  packagePrice: { fontSize: 15, fontWeight: '700', color: PRIMARY },
+  packageScope: { fontSize: 13, color: '#555', marginBottom: 4 },
+  packageDelivery: { fontSize: 12, color: '#888' },
+  errorText: { fontSize: 15, color: '#c62828', textAlign: 'center' },
+});

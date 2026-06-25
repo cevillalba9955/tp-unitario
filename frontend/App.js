@@ -7,6 +7,7 @@ import MyServicesScreen from './src/screens/freelancer/MyServicesScreen';
 import CreateServiceScreen from './src/screens/freelancer/CreateServiceScreen';
 import BuyerLoginScreen from './src/screens/buyer/BuyerLoginScreen';
 import BuyerCatalogScreen from './src/screens/buyer/BuyerCatalogScreen';
+import ServiceDetailScreen from './src/screens/buyer/ServiceDetailScreen';
 
 const Stack = createStackNavigator();
 
@@ -40,6 +41,15 @@ export default function App() {
             component={BuyerCatalogScreen}
             options={{
               title: 'Catálogo',
+              headerStyle: { backgroundColor: '#7b1fa2' },
+              headerTintColor: '#fff',
+            }}
+          />
+          <Stack.Screen
+            name="ServiceDetail"
+            component={ServiceDetailScreen}
+            options={{
+              title: 'Detalle del Servicio',
               headerStyle: { backgroundColor: '#7b1fa2' },
               headerTintColor: '#fff',
             }}

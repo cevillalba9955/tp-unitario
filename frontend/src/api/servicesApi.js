@@ -14,6 +14,11 @@ export const login = (email, password, role) =>
 export const getCategories = () =>
   api.get('/api/v1/categories').then((r) => r.data);
 
+export const getCatalog = (categoryId) => {
+  const params = categoryId ? { categoryId } : {};
+  return api.get('/api/v1/services', { params }).then((r) => r.data.data);
+};
+
 export const getMyServices = (params) =>
   api.get('/api/v1/services/my', { params }).then((r) => r.data);
 
