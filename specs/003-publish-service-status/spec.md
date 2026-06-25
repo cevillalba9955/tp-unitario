@@ -57,16 +57,18 @@ pantalla de edición con los datos intactos.
 
 ### User Story 3 - Publicar un servicio en estado Borrador existente (Priority: P3)
 
-El freelancer tiene un servicio guardado previamente como borrador. Desde su lista de
-servicios o desde la pantalla de edición, acciona para publicarlo. El flujo de
-validación y cambio de estado aplica igual que en US1 y US2.
+El freelancer tiene un servicio guardado previamente como borrador. Desde la pantalla
+de edición (`CreateServiceScreen` en modo edición con `serviceId`), acciona para
+publicarlo. El flujo de validación y cambio de estado aplica igual que en US1 y US2.
+**Nota de alcance**: la publicación directa desde la tarjeta en la lista de servicios
+(`ServiceCard`) queda fuera del scope de esta feature.
 
 **Why this priority**: Complementa el ciclo de vida del servicio. Un borrador sin
 opción de publicar directo queda atrapado; esta historia cierra el flujo (Principio V:
 incremento aditivo sobre US1/US2).
 
 **Independent Test**: Con un servicio existente en estado "Borrador" con datos
-completos, pulsar "Publicar" desde la lista o pantalla de edición. Verificar que el
+completos, abrirlo en `CreateServiceScreen` y pulsar "Publicar". Verificar que el
 estado cambia a "Publicado".
 
 **Acceptance Scenarios**:
@@ -95,7 +97,7 @@ estado cambia a "Publicado".
 - **FR-007**: El estado del servicio ("Borrador" o "Publicado") DEBE ser visible de forma diferenciada en la lista de servicios del freelancer.
 - **FR-008**: El sistema DEBE validar los requisitos mínimos de publicación en el servidor (título, descripción, categoría y al menos un paquete con precio y plazo válidos) antes de cambiar el estado.
 - **FR-009**: Si el guardado automático como borrador también falla, el sistema DEBE mostrar un mensaje de error diferenciado indicando que el servicio no pudo guardarse.
-- **FR-010**: Un servicio previamente guardado como borrador DEBE poder publicarse desde la lista de servicios o desde la pantalla de edición, sin necesidad de recrearlo.
+- **FR-010**: Un servicio previamente guardado como borrador DEBE poder publicarse desde la pantalla de edición (`CreateServiceScreen`), sin necesidad de recrearlo.
 
 ### Key Entities
 
@@ -112,6 +114,12 @@ estado cambia a "Publicado".
 - **SC-003**: Tras una publicación fallida, el 100% de los datos ingresados por el freelancer permanecen disponibles en la pantalla sin necesidad de reingresarlos.
 - **SC-004**: El freelancer puede identificar el estado de cada servicio en su lista en menos de 3 segundos (diferenciación visual clara entre "Borrador" y "Publicado").
 - **SC-005**: El freelancer puede pasar de un error de publicación a una publicación exitosa corrigiendo solo los campos indicados en el mensaje de error, sin pasos adicionales.
+
+## Clarifications
+
+### Session 2026-06-24
+
+- Q: Tras un fallo de publicación en US2 (servicio nuevo guardado como borrador), ¿el usuario navega a la lista o permanece en pantalla en modo edición del borrador? → A: El usuario permanece en la pantalla actual en modo edición del borrador guardado (FR-006 prevalece sobre el quickstart; el quickstart fue corregido para reflejar este comportamiento).
 
 ## Assumptions
 

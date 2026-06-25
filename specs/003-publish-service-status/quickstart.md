@@ -25,9 +25,9 @@
 2. Ingresar solo el título, sin categoría ni paquetes
 3. Pulsar **"Guardar y publicar"**
 4. **Resultado esperado**:
-   - Aparece mensaje informando que el servicio fue guardado como borrador y listando los campos faltantes (ej. "categoryId, packages")
-   - La app navega a la lista de servicios
-   - En la pestaña "Borradores" aparece el servicio con badge naranja "Borrador"
+   - Aparece mensaje de error inline indicando que el servicio fue guardado como borrador y listando los campos faltantes (ej. "categoryId, packages")
+   - La pantalla permanece activa en modo edición del borrador recién guardado (los datos ingresados están intactos)
+   - El badge de estado muestra "Borrador"
 
 ---
 

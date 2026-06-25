@@ -10,7 +10,7 @@
 
 ## Format: `[ID] [P?] [Story] Description`
 
-- **[P]**: Puede ejecutarse en paralelo (archivos distintos, sin dependencias incompletas)
+- **[P]**: Puede ejecutarse en paralelo (funciones independientes dentro del mismo archivo, sin dependencias incompletas)
 - **[Story]**: Historia de usuario a la que pertenece la tarea
 
 ---
@@ -28,7 +28,7 @@
 
 ## Phase 2: Foundational
 
-No hay prerequisitos bloqueantes: las dos historias afectan archivos distintos y pueden implementarse en paralelo tras el setup.
+No hay prerequisitos bloqueantes: las dos historias afectan funciones independientes dentro de `CreateServiceScreen.js` y pueden implementarse en paralelo tras el setup.
 
 ---
 
@@ -56,8 +56,9 @@ No hay prerequisitos bloqueantes: las dos historias afectan archivos distintos y
 
 ### Implementación US2
 
-- [x] T004 [US2] En `frontend/src/screens/freelancer/CreateServiceScreen.js`, modificar el bloque `catch` de `handleSaveAndPublish` para que cuando `publishService` falle (422 u otro error tras `createService` exitoso), muestre el mensaje: "Tu servicio fue guardado como borrador. Revisá los campos faltantes: {missing.join(', ')}" usando el campo `e.response?.data?.missing` del error 422, luego llame `navigation.goBack()`
-- [x] T005 [US2] En `frontend/src/screens/freelancer/CreateServiceScreen.js`, manejar el caso donde `publishService` falla con un error que no tiene `missing` (error de red u otro): mostrar mensaje genérico "Tu servicio fue guardado como borrador. Ocurrió un error al publicarlo." y llamar `navigation.goBack()`
+- [x] T004 [US2] En `frontend/src/screens/freelancer/CreateServiceScreen.js`, modificar el bloque `catch` de `handleSaveAndPublish` para que cuando `publishService` falle (422 u otro error tras `createService` exitoso), muestre el mensaje: "Tu servicio fue guardado como borrador. Revisá los campos faltantes: {missing.join(', ')}" usando el campo `e.response?.data?.missing` del error 422, y setee `serviceId` para pasar a modo edición del borrador (FR-006: el usuario permanece en pantalla con datos intactos)
+- [x] T005 [US2] En `frontend/src/screens/freelancer/CreateServiceScreen.js`, manejar el caso donde `publishService` falla con un error que no tiene `missing` (error de red u otro): mostrar mensaje genérico "Tu servicio fue guardado como borrador. Ocurrió un error al publicarlo." y setear `serviceId` para modo edición (FR-006)
+- [x] T014 [US2] En `frontend/src/screens/freelancer/CreateServiceScreen.js`, manejar el caso donde `createService` en sí falla (antes de llegar a `publishService`): mostrar mensaje diferenciado "No se pudo guardar el servicio. Verificá tu conexión e intentá de nuevo." sin llamar `navigation.goBack()` para que el usuario conserve los datos (FR-009)
 
 **Checkpoint**: US2 verificada — fallo de publicación muestra mensaje descriptivo y navega al listado. Probar con `quickstart.md` Escenarios 2 y 3.
 
@@ -85,6 +86,7 @@ No hay prerequisitos bloqueantes: las dos historias afectan archivos distintos y
 - [x] T010 [P] Ejecutar `quickstart.md` Escenario 6 (error de red): verificar que ningún flujo cambia el estado del servicio sin respuesta 200 del servidor
 - [x] T011 [P] Verificar que el error `publishError` en `CreateServiceScreen.js` se limpia al navegar fuera y volver a la pantalla (la carga inicial recarga el servicio)
 - [x] T012 Ejecutar todos los escenarios de `quickstart.md` (1–6) y registrar resultados; corregir cualquier desviación encontrada
+- [x] T013 [P] Verificar que un servicio recién publicado (Escenario 1) aparece en el endpoint/vista del catálogo público — navegar al catálogo y confirmar que el servicio es visible (FR-003)
 
 ---
 
@@ -95,14 +97,14 @@ No hay prerequisitos bloqueantes: las dos historias afectan archivos distintos y
 - **Phase 1 (Setup)**: Sin dependencias — comenzar inmediatamente
 - **Phase 2 (Foundational)**: N/A para esta feature
 - **Phase 3 (US1)**: Puede comenzar tras Phase 1; no depende de US2/US3
-- **Phase 4 (US2)**: Puede comenzar tras Phase 1 en paralelo con US1 (archivo distinto: mismo archivo pero tareas secuenciales dentro)
-- **Phase 5 (US3)**: Puede comenzar tras Phase 1 en paralelo con US1 y US2 (archivo distinto)
+- **Phase 4 (US2)**: Puede comenzar tras Phase 1 en paralelo con US1 (mismo archivo, tareas secuenciales dentro de US2)
+- **Phase 5 (US3)**: Puede comenzar tras Phase 1 en paralelo con US1 y US2 (mismo archivo, funciones independientes)
 - **Phase 6 (Polish)**: Depende de US1 + US2 + US3 completas
 
 ### Paralelismo disponible
 
-- T001 y T002 pueden ejecutarse en paralelo (archivos distintos)
-- US1 (T003) y US3 (T006–T009) pueden trabajarse en paralelo (archivos distintos)
+- T001 y T002 pueden ejecutarse en paralelo (funciones independientes en el mismo archivo)
+- US1 (T003) y US3 (T006–T009) pueden trabajarse en paralelo (funciones independientes en el mismo archivo)
 - T010 y T011 pueden ejecutarse en paralelo (Phase 6)
 
 ---
@@ -140,5 +142,5 @@ Developer B: US3 en CreateServiceScreen.js (T006, T007, T008, T009)
 
 - La edición se resuelve dentro de `CreateServiceScreen.js`
 - El backend no cambia; `ServiceCard.handlePublish` tampoco cambia
-- [P] en T001/T002 y T006 indica paralelismo real por archivo distinto
+- [P] en T001/T002 y T006 indica paralelismo real por funciones independientes en el mismo archivo
 - Validación manual con `quickstart.md` es suficiente (no hay tests automatizados solicitados)

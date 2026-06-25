@@ -5,6 +5,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import LoginScreen from './src/screens/freelancer/LoginScreen';
 import MyServicesScreen from './src/screens/freelancer/MyServicesScreen';
 import CreateServiceScreen from './src/screens/freelancer/CreateServiceScreen';
+import BuyerLoginScreen from './src/screens/buyer/BuyerLoginScreen';
+import BuyerCatalogScreen from './src/screens/buyer/BuyerCatalogScreen';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +29,16 @@ export default function App() {
             name="CreateService"
             component={CreateServiceScreen}
             options={{ title: 'Nuevo Servicio' }}
+          />
+          <Stack.Screen
+            name="BuyerLogin"
+            component={BuyerLoginScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="BuyerCatalog"
+            component={BuyerCatalogScreen}
+            options={{ title: 'Catálogo' }}
           />
         </Stack.Navigator>
       </NavigationContainer>

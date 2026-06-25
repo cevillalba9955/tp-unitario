@@ -187,12 +187,7 @@ export default function CreateServiceScreen({ route, navigation }) {
         },
       });
     } catch (e) {
-      if (!e.response) {
-        setError('Error al guardar el servicio.');
-        return;
-      }
-
-      setError(e.response?.data?.message || 'Error al guardar el servicio.');
+      setError('No se pudo guardar el servicio. Verificá tu conexión e intentá de nuevo.');
     //   Alert.alert('Servicio guardado como borrador', message, [
     //     { text: 'OK', onPress: () => navigation.goBack() },
     //   ]);
