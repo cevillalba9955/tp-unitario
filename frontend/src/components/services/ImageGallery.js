@@ -1,15 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, Image, TouchableOpacity,
-  FlatList, Alert, StyleSheet,
+  FlatList, Alert, StyleSheet, Animated,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { uploadImage, deleteImage } from '../../api/servicesApi';
 import { API_BASE_URL } from '../../api/config';
 
 const MAX_IMAGES = 5;
+const SKELETON_ID = '__skeleton__';
+
+function SkeletonItem() {
+  const opacity = useRef(new Animated.Value(0.3)).current;
+
+  useEffect(() => {
+    const anim = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, { toValue: 1, duration: 600, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 0.3, duration: 600, useNativeDriver: true }),
+      ])
+    );
+    anim.start();
+    return () => anim.stop();
+  }, []);
+
+  return <Animated.View style={[styles.skeleton, { opacity }]} />;
+}
 
 export default function ImageGallery({ serviceId, images, onChange }) {
+  const [uploading, setUploading] = useState(false);
+
   const handleAdd = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
@@ -25,12 +45,15 @@ export default function ImageGallery({ serviceId, images, onChange }) {
     if (result.canceled) return;
 
     const asset = result.assets[0];
+    setUploading(true);
     try {
       const uploaded = await uploadImage(serviceId, asset.uri, asset.mimeType || 'image/jpeg');
       onChange([...images, uploaded]);
     } catch (e) {
       const msg = e.response?.data?.message || 'Error al subir la imagen.';
       Alert.alert('Error de subida', msg);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -52,25 +75,33 @@ export default function ImageGallery({ serviceId, images, onChange }) {
     ]);
   };
 
+  const listData = uploading ? [...images, { id: SKELETON_ID }] : images;
+
   return (
     <View>
       <FlatList
-        data={images}
+        data={listData}
         horizontal
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.imageWrapper}>
-            <Image
-              source={{ uri: `${API_BASE_URL}${item.imageUrl}` }}
-              style={styles.image}
-            />
-            <TouchableOpacity style={styles.deleteBtn} onPress={() => handleDelete(item)}>
-              <Text style={styles.deleteBtnText}>✕</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        renderItem={({ item }) =>
+          item.id === SKELETON_ID ? (
+            <View style={styles.imageWrapper}>
+              <SkeletonItem />
+            </View>
+          ) : (
+            <View style={styles.imageWrapper}>
+              <Image
+                source={{ uri: `${API_BASE_URL}${item.imageUrl}` }}
+                style={styles.image}
+              />
+              <TouchableOpacity style={styles.deleteBtn} onPress={() => handleDelete(item)}>
+                <Text style={styles.deleteBtnText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+          )
+        }
         ListFooterComponent={
-          images.length < MAX_IMAGES ? (
+          !uploading && images.length < MAX_IMAGES ? (
             <TouchableOpacity style={styles.addBtn} onPress={handleAdd}>
               <Text style={styles.addBtnText}>+</Text>
               <Text style={styles.addBtnLabel}>Agregar</Text>
@@ -90,6 +121,7 @@ const styles = StyleSheet.create({
   list: { paddingVertical: 8, gap: 8 },
   imageWrapper: { width: 90, height: 90, marginRight: 8, position: 'relative' },
   image: { width: 90, height: 90, borderRadius: 8, backgroundColor: '#eee' },
+  skeleton: { width: 90, height: 90, borderRadius: 8, backgroundColor: '#c5cae9' },
   deleteBtn: {
     position: 'absolute', top: -6, right: -6,
     width: 22, height: 22, borderRadius: 11,
