@@ -4,7 +4,7 @@ import {
   ActivityIndicator, StyleSheet, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { login } from '../../api/servicesApi';
-import { setToken } from '../../api/config';
+import { setToken, setRole } from '../../api/config';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -20,8 +20,9 @@ export default function LoginScreen({ navigation }) {
     }
     setLoading(true);
     try {
-      const { token } = await login(email.trim(), password);
+      const { token, role } = await login(email.trim(), password, 'freelancer');
       setToken(token);
+      setRole(role);
       navigation.replace('MyServices');
     } catch (e) {
       const msg = e.response?.data?.message || 'Error al iniciar sesión.';
@@ -38,7 +39,7 @@ export default function LoginScreen({ navigation }) {
     >
       <View style={styles.card}>
         <Text style={styles.title}>FreelanceHub</Text>
-        <Text style={styles.subtitle}>Iniciá sesión para continuar</Text>
+        <Text style={styles.subtitle}>Entrá como Freelancer</Text>
 
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -70,6 +71,10 @@ export default function LoginScreen({ navigation }) {
         </TouchableOpacity>
 
         <Text style={styles.hint}>Demo: freelancer@demo.com / demo1234</Text>
+
+        <TouchableOpacity onPress={() => navigation.navigate('BuyerLogin')} style={styles.switchLink}>
+          <Text style={styles.switchText}>¿Sos comprador? Ingresá aquí</Text>
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
@@ -86,4 +91,6 @@ const styles = StyleSheet.create({
   btn: { backgroundColor: '#1976d2', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 4 },
   btnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
   hint: { marginTop: 16, fontSize: 12, color: '#aaa', textAlign: 'center' },
+  switchLink: { marginTop: 12, alignItems: 'center' },
+  switchText: { fontSize: 13, color: '#1976d2', textDecorationLine: 'underline' },
 });

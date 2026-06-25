@@ -1,19 +1,16 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 1.1.0 → 1.1.1
+Version change: 1.1.1 → 1.1.2
 Modified sections:
-  - Stack Tecnológico y Restricciones: precisión sobre ejecución del backend
-      · Backend DEBE ejecutarse en un contenedor Docker (local)
-      · La app React Native se conecta al backend vía red local (host Docker)
-      · Eliminada: referencia genérica a "ejecución local en el dispositivo" para el backend
+  - Principio I: aclaración sobre navegación entre pantallas de login antes de autenticarse
 Added sections: N/A
 Removed sections: N/A
-Principles modified: N/A (I–V sin cambios)
+Principles modified: I (ampliado con nota sobre switch de login)
 Templates reviewed:
-  - .specify/templates/plan-template.md   ✅ alineado (sin referencias al runtime del backend)
-  - .specify/templates/spec-template.md   ✅ alineado
-  - .specify/templates/tasks-template.md  ✅ alineado
+  - .specify/templates/plan-template.md   ✅ sin impacto
+  - .specify/templates/spec-template.md   ✅ sin impacto
+  - .specify/templates/tasks-template.md  ✅ sin impacto
 Deferred TODOs: ninguno
 -->
 
@@ -30,6 +27,12 @@ desde la perspectiva de uno de estos roles. Las interfaces, permisos y flujos de
 datos NO DEBEN mezclar capacidades de ambos roles en una misma vista o endpoint sin
 justificación explícita y aprobación. Un usuario puede tener ambos roles, pero las
 vistas deben permanecer separadas.
+
+**Nota — navegación pre-autenticación**: Antes de iniciar sesión, el usuario PUEDE
+cambiar entre la pantalla de login de Comprador y la de Freelancer mediante un enlace
+explícito. Esta navegación es la única excepción al aislamiento de vistas por rol; una vez autenticado,
+el cambio de rol DEBE requerir cierre de sesión explícito. La pantalla de entrada
+predeterminada es la de Comprador.
 
 **Rationale**: Mezclar responsabilidades de roles produce interfaces ambiguas,
 reglas de autorización frágiles y experiencias de usuario confusas.
@@ -138,4 +141,4 @@ Las siguientes restricciones son fijas e inamovibles:
 - Las consultas sobre aplicación de principios en casos límite se resuelven
   favoreciendo el principio de menor sorpresa para el usuario final.
 
-**Version**: 1.1.1 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-23
+**Version**: 1.1.2 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-24

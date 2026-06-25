@@ -21,11 +21,11 @@ function getServiceImages(serviceId) {
 
 // GET /api/v1/services/my
 router.get('/my', auth, (req, res) => {
-  const { freelancerId } = req.user;
+  const { userId } = req.user;
   const { status, page = '0', limit = '20' } = req.query;
 
   let services = Array.from(store.services.values()).filter(
-    (s) => s.freelancerId === freelancerId
+    (s) => s.freelancerId === userId
   );
   if (status) services = services.filter((s) => s.status === status.toUpperCase());
 
@@ -50,7 +50,7 @@ router.get('/my', auth, (req, res) => {
 
 // POST /api/v1/services
 router.post('/', auth, (req, res) => {
-  const { freelancerId } = req.user;
+  const { userId } = req.user;
   const { title = '', description = '', categoryId = null, packages: pkgsBody } = req.body;
 
   const { valid, errors } = validateFields({ title, description, packages: pkgsBody });
@@ -69,7 +69,7 @@ router.post('/', auth, (req, res) => {
     description,
     categoryId,
     status: 'DRAFT',
-    freelancerId,
+    freelancerId: userId,
     createdAt: now,
     updatedAt: now,
   };
@@ -99,7 +99,7 @@ router.get('/:id', auth, (req, res) => {
   const service = store.services.get(req.params.id);
   if (!service) return res.status(404).json({ error: 'NOT_FOUND', message: 'Servicio no encontrado.' });
 
-  if (service.status === 'DRAFT' && service.freelancerId !== req.user.freelancerId) {
+  if (service.status === 'DRAFT' && service.freelancerId !== req.user.userId) {
     return res.status(403).json({ error: 'FORBIDDEN', message: 'Acceso denegado.' });
   }
 
@@ -114,7 +114,7 @@ router.get('/:id', auth, (req, res) => {
 router.put('/:id', auth, (req, res) => {
   const service = store.services.get(req.params.id);
   if (!service) return res.status(404).json({ error: 'NOT_FOUND', message: 'Servicio no encontrado.' });
-  if (service.freelancerId !== req.user.freelancerId) {
+  if (service.freelancerId !== req.user.userId) {
     return res.status(403).json({ error: 'FORBIDDEN', message: 'Acceso denegado.' });
   }
 
@@ -177,7 +177,7 @@ router.put('/:id', auth, (req, res) => {
 router.delete('/:id', auth, (req, res) => {
   const service = store.services.get(req.params.id);
   if (!service) return res.status(404).json({ error: 'NOT_FOUND', message: 'Servicio no encontrado.' });
-  if (service.freelancerId !== req.user.freelancerId) {
+  if (service.freelancerId !== req.user.userId) {
     return res.status(403).json({ error: 'FORBIDDEN', message: 'Acceso denegado.' });
   }
   if (service.status === 'PUBLISHED') {
@@ -198,7 +198,7 @@ router.delete('/:id', auth, (req, res) => {
 router.post('/:id/publish', auth, (req, res) => {
   const service = store.services.get(req.params.id);
   if (!service) return res.status(404).json({ error: 'NOT_FOUND', message: 'Servicio no encontrado.' });
-  if (service.freelancerId !== req.user.freelancerId) {
+  if (service.freelancerId !== req.user.userId) {
     return res.status(403).json({ error: 'FORBIDDEN', message: 'Acceso denegado.' });
   }
 
@@ -223,7 +223,7 @@ router.post('/:id/publish', auth, (req, res) => {
 router.post('/:id/unpublish', auth, (req, res) => {
   const service = store.services.get(req.params.id);
   if (!service) return res.status(404).json({ error: 'NOT_FOUND', message: 'Servicio no encontrado.' });
-  if (service.freelancerId !== req.user.freelancerId) {
+  if (service.freelancerId !== req.user.userId) {
     return res.status(403).json({ error: 'FORBIDDEN', message: 'Acceso denegado.' });
   }
 

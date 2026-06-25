@@ -34,11 +34,11 @@ router.post('/', auth, (req, res) => {
     }
 
     const { serviceId } = req.params;
-    const { freelancerId } = req.user;
+    const { userId } = req.user;
 
     const service = store.services.get(serviceId);
     if (!service) return res.status(404).json({ error: 'NOT_FOUND', message: 'Servicio no encontrado.' });
-    if (service.freelancerId !== freelancerId) {
+    if (service.freelancerId !== userId) {
       return res.status(403).json({ error: 'FORBIDDEN', message: 'Acceso denegado.' });
     }
 
@@ -74,11 +74,11 @@ router.post('/', auth, (req, res) => {
 // DELETE /api/v1/services/:serviceId/images/:imageId
 router.delete('/:imageId', auth, (req, res) => {
   const { serviceId, imageId } = req.params;
-  const { freelancerId } = req.user;
+  const { userId } = req.user;
 
   const service = store.services.get(serviceId);
   if (!service) return res.status(404).json({ error: 'NOT_FOUND', message: 'Servicio no encontrado.' });
-  if (service.freelancerId !== freelancerId) {
+  if (service.freelancerId !== userId) {
     return res.status(403).json({ error: 'FORBIDDEN', message: 'Acceso denegado.' });
   }
 

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useLayoutEffect } from 'react';
 import {
   View, Text, FlatList, TouchableOpacity,
   ActivityIndicator, StyleSheet, RefreshControl,
@@ -6,6 +6,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import ServiceCard from '../../components/services/ServiceCard';
 import { getMyServices } from '../../api/servicesApi';
+import { setToken } from '../../api/config';
 
 const TABS = [
   { key: 'PUBLISHED', label: 'Publicados' },
@@ -17,6 +18,22 @@ export default function MyServicesScreen({ navigation }) {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const handleLogout = () => {
+    setToken(null);
+    navigation.replace('Login');
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => null,
+      headerRight: () => (
+        <TouchableOpacity onPress={handleLogout} style={{ marginRight: 16 }}>
+          <Text style={{ color: '#1976d2', fontSize: 14 }}>Cerrar sesión</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
 
   const loadServices = useCallback(async () => {
     try {

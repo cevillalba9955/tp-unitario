@@ -11,7 +11,7 @@ function auth(req, res, next) {
   const token = header.slice(7);
   try {
     const payload = jwt.verify(token, JWT_SECRET);
-    req.user = { freelancerId: payload.freelancerId || payload.sub || payload.id };
+    req.user = { userId: payload.userId || payload.sub || payload.id };
     next();
   } catch {
     return res.status(401).json({ error: 'UNAUTHORIZED', message: 'Token inválido o expirado.' });
