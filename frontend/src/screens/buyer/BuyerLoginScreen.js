@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
   ActivityIndicator, StyleSheet, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { login } from '../../api/servicesApi';
-import { setToken, setRole } from '../../api/config';
+import { setToken, setRole, getToken } from '../../api/config';
 
 export default function BuyerLoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (getToken()) {
+      navigation.replace('BuyerCatalog');
+    }
+  }, []);
 
   const handleLogin = async () => {
     setError(null);

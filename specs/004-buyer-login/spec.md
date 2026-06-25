@@ -92,6 +92,7 @@ realizar una llamada al servidor.
 - **FR-007**: Tras un fallo de login, el comprador DEBE permanecer en la pantalla de login con los campos listos para reintentar.
 - **FR-008**: Si el servidor no responde, el sistema DEBE mostrar un mensaje de error de conexión y permitir reintentar.
 - **FR-009**: El sistema DEBE normalizar (eliminar espacios al inicio y fin) el valor del campo email antes de enviarlo al servidor.
+- **FR-010**: Si el Comprador ya tiene una sesión activa y navega a la pantalla de login, el sistema DEBE redirigirlo automáticamente al catálogo sin mostrar el formulario.
 
 ### Key Entities
 
@@ -103,10 +104,17 @@ realizar una llamada al servidor.
 
 ### Measurable Outcomes
 
-- **SC-001**: El comprador puede completar el flujo de login exitoso en menos de 30 segundos desde que abre la pantalla.
+- **SC-001**: La llamada de autenticación al servidor DEBE completarse en menos de 3 segundos. *(Nota UX: el flujo completo de login, incluyendo tiempo de tipeo del usuario, debería tomar menos de 30 segundos en condiciones normales; esto es una guía de experiencia, no un SLO medible.)*
 - **SC-002**: El 100% de los intentos con credenciales incorrectas muestran un mensaje de error sin revelar cuál campo falló.
 - **SC-003**: El 100% de los intentos con campos vacíos o email inválido son detectados localmente sin llamada al servidor.
 - **SC-004**: Tras un login exitoso, el comprador ve el catálogo de servicios en menos de 3 segundos.
+
+## Clarifications
+
+### Session 2026-06-24
+
+- Q: SC-001 mezcla tiempo del usuario con tiempo del sistema — ¿cómo reformular? → A: Separar en umbral medible (llamada al servidor < 3 s, alineado con SC-004) y nota UX narrativa para los 30 s. SC-001 actualizado.
+- Q: El edge case "ya autenticado → redirigir al catálogo" está en la spec sin tarea ni código — ¿implementar redirect guard en BuyerLoginScreen? → A: Sí, implementar con useEffect al montar: si hay token activo, llamar navigation.replace('BuyerCatalog'). FR-010 agregado.
 
 ## Assumptions
 

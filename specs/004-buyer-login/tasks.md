@@ -83,6 +83,10 @@ bloqueantes adicionales: las pantallas son archivos independientes.
 
 ---
 
+- [x] T013 [US1] En `frontend/src/screens/buyer/BuyerLoginScreen.js`, agregar `useEffect` al montar que verifique `getToken()` y llame `navigation.replace('BuyerCatalog')` si hay sesión activa (FR-010)
+
+---
+
 ## Phase 6: Polish & Validaciones cruzadas
 
 - [x] T011 [P] Ejecutar `quickstart.md` Escenario 3 (error de conexión): verificar que el estado del formulario permanece intacto y no hay crash
