@@ -10,6 +10,11 @@
 
 ## Clarifications
 
+### Session 2026-07-08
+
+- Q: ¿El endpoint de detalle de servicio (`GET /api/v1/services/:id`) debe ser público para servicios publicados? → A: Sí. El detalle de un servicio publicado es accesible sin autenticación, igual que la lista, en cumplimiento del Principio II y de US3. Se añade FR-012 y una tarea de verificación.
+- Q: ¿Qué responde `GET /api/v1/services/:id` para un servicio en "Borrador" o inexistente? → A: 404 Not Found para el comprador (autenticado o anónimo) y para cualquier solicitante que no sea el dueño; se oculta la existencia de servicios no publicados (ocultación por diseño, Principio IV). El dueño conserva acceso a su propio borrador. El frontend del comprador muestra "servicio no disponible". Se añade FR-013. Nota: hoy el backend devuelve 403 a no-dueños (services.js:133-135); FR-013 requiere cambiarlo a 404.
+
 ### Session 2026-06-24
 
 - Q: ¿El catálogo requiere autenticación para ser accedido? → A: No. El catálogo es público (Principio II: "navegable y filtrable sin autenticación previa"). FR-010 actualizado: la autenticación solo se exige para acciones de escritura (contratar). El redirect guard basado en token fue eliminado del frontend y el middleware `auth` fue retirado del endpoint `GET /api/v1/services`.
@@ -26,13 +31,13 @@ información básica de cada servicio (título, categoría, precio mínimo).
 servicios. Es el núcleo del valor de la plataforma para el Comprador (Principio II:
 catálogo como núcleo del sistema).
 
-**Independent Test**: Iniciar sesión como comprador, navegar al catálogo y verificar
+**Independent Test**: Como comprador (autenticado o no), navegar al catálogo y verificar
 que se muestran los servicios publicados con título, categoría y precio mínimo.
 Verificar que servicios en estado "Borrador" no aparecen.
 
 **Acceptance Scenarios**:
 
-1. **Given** el comprador está autenticado, **When** accede al catálogo, **Then** ve una lista de servicios publicados con título, nombre de categoría y precio del paquete más económico.
+1. **Given** el comprador accede al catálogo (autenticado o no), **When** abre la pantalla, **Then** ve una lista de servicios publicados con título, nombre de categoría y precio del paquete más económico.
 2. **Given** existen servicios en estado "Borrador", **When** el comprador ve el catálogo, **Then** esos servicios NO aparecen en la lista.
 3. **Given** no hay servicios publicados en la plataforma, **When** el comprador accede al catálogo, **Then** ve un mensaje indicando que aún no hay servicios disponibles.
 
@@ -84,7 +89,7 @@ si las hay.
 
 - ¿Qué ocurre si el catálogo tiene muchos servicios? La lista debe ser desplazable (scroll) sin degradar la experiencia.
 - ¿Qué ocurre si el servidor no responde al cargar el catálogo? Se muestra un mensaje de error con opción de reintentar.
-- ¿Qué pasa si un servicio se despublica mientras el comprador está en su detalle? Al volver al catálogo, ese servicio ya no aparece en la lista.
+- ¿Qué pasa si un servicio se despublica mientras el comprador está en su detalle? Al volver al catálogo, ese servicio ya no aparece en la lista. Si el comprador recarga el detalle de un servicio ya despublicado (o inexistente), `GET /api/v1/services/:id` responde 404 y el frontend muestra "servicio no disponible" (ver FR-013).
 - ¿Qué ocurre si el usuario no está autenticado y accede al catálogo? El catálogo es público y se muestra normalmente; la autenticación solo es requerida al intentar contratar un servicio (fuera del scope de esta feature).
 
 ## Requirements *(mandatory)*
@@ -102,6 +107,8 @@ si las hay.
 - **FR-009**: La pantalla de detalle DEBE mostrar: título, descripción completa, categoría, paquetes de contratación (nombre, alcance, precio y plazo) e imágenes del servicio.
 - **FR-010**: El catálogo de servicios es accesible sin autenticación previa, en cumplimiento del Principio II de la Constitución. La autenticación solo es requerida para acciones de escritura (contratación, favoritos).
 - **FR-011**: Si el servidor no responde al cargar el catálogo, el sistema DEBE mostrar un mensaje de error con opción de reintentar.
+- **FR-012**: El detalle de un servicio en estado "Publicado" DEBE ser accesible sin autenticación previa a través de `GET /api/v1/services/:id` (sin middleware `auth`), en cumplimiento del Principio II y de FR-010. La autenticación solo se exige para acciones de escritura (contratación).
+- **FR-013**: `GET /api/v1/services/:id` DEBE responder **404 Not Found** cuando el servicio no exista, o cuando esté en estado "Borrador" y el solicitante NO sea su dueño (comprador autenticado o anónimo), ocultando la existencia de servicios no publicados (ocultación por diseño, Principio IV). El dueño (freelancer) DEBE poder seguir accediendo a su propio borrador por este endpoint (gestión de servicios). El frontend del comprador DEBE mostrar un mensaje "servicio no disponible" ante un 404.
 
 ### Key Entities
 
@@ -120,7 +127,7 @@ si las hay.
 
 ## Assumptions
 
-- El backend no expone aún un endpoint de catálogo público; debe crearse `GET /api/v1/services` como parte de esta feature (sin middleware de autenticación).
+- El backend no expone aún un endpoint de catálogo público; debe crearse `GET /api/v1/services` como parte de esta feature (sin middleware de autenticación). El endpoint de detalle `GET /api/v1/services/:id` también DEBE ser público para servicios publicados (ver FR-012).
 - El backend ya cuenta con `GET /api/v1/categories` utilizable para construir el filtro.
 - El catálogo solo muestra servicios propios de la plataforma; no se integran fuentes externas.
 - La paginación no es requerida en este scope: se muestran todos los servicios publicados en una lista con scroll.

@@ -42,9 +42,9 @@
 
 ## Phase 3: User Story 1 — Explorar el catálogo de servicios publicados (Priority: P1) 🎯 MVP
 
-**Goal**: El comprador autenticado ve la lista completa de servicios publicados con título, categoría y precio mínimo. Sin filtro, sin detalle — solo la lista.
+**Goal**: El comprador (autenticado o no) ve la lista completa de servicios publicados con título, categoría y precio mínimo. Sin filtro, sin detalle — solo la lista.
 
-**Independent Test**: Iniciar sesión como `buyer@demo.com`, navegar al catálogo y verificar lista de servicios publicados con título, categoría y precio mínimo; confirmar que servicios DRAFT no aparecen; verificar mensaje de lista vacía si no hay publicados.
+**Independent Test**: Como comprador (autenticado o no), navegar al catálogo y verificar lista de servicios publicados con título, categoría y precio mínimo; confirmar que servicios DRAFT no aparecen; verificar mensaje de lista vacía si no hay publicados.
 
 ### Implementation
 
@@ -85,7 +85,13 @@
 - [x] T013 [US3] Hacer que cada ítem del catálogo en `BuyerCatalogScreen` sea toqueable y navegue a `ServiceDetail` con `navigation.navigate('ServiceDetail', { serviceId: item.id })` (`frontend/src/screens/buyer/BuyerCatalogScreen.js`)
 - [x] T014 [US3] Verificar preservación de filtro: como el estado local de `BuyerCatalogScreen` se mantiene al hacer `navigate` (push) + `goBack()`, confirmar que el `selectedCategory` no se resetea al volver del detalle
 
-**Checkpoint**: US3 funcional — el flujo catálogo → detalle → catálogo funciona con filtro preservado.
+### Acceso público y ocultación del detalle (FR-012, FR-013)
+
+- [x] T018 [US3] Verificar FR-012 (detalle público): confirmar en `backend/src/routes/services.js` que `GET /:id` usa `optionalAuth` (no `auth`) y que un comprador sin token recibe 200 con el detalle de un servicio PUBLISHED (título, descripción, categoría, paquetes, `images` como array) — verificado con curl: `GET /services/svc-demo-001` sin token → 200
+- [x] T019 [US3] Implementar FR-013 en `backend/src/routes/services.js` (`GET /:id`): cambiar la respuesta para un servicio en DRAFT solicitado por quien NO es el dueño de **403** a **404 NOT_FOUND** (ocultación por diseño, Principio IV); preservar el 404 para servicio inexistente; MANTENER el acceso 200 del dueño (`freelancerId === req.user?.userId`) a su propio borrador para no romper la gestión de servicios (feature 003/004) — verificado con curl: DRAFT no-dueño → 404, DRAFT dueño → 200, inexistente → 404
+- [x] T020 [US3] Manejar 404 en `frontend/src/screens/buyer/ServiceDetailScreen.js`: si `getService(serviceId)` responde 404, mostrar el mensaje "Servicio no disponible" (servicio despublicado o inexistente) en lugar del error genérico, con opción de volver al catálogo (botón "Volver al catálogo")
+
+**Checkpoint**: US3 funcional — el flujo catálogo → detalle → catálogo funciona con filtro preservado; el detalle es público para servicios publicados y oculta (404) los no publicados a los compradores.
 
 ---
 
@@ -124,6 +130,7 @@
 - `getCatalog()` en `servicesApi.js` antes que `BuyerCatalogScreen`
 - `ServiceDetailScreen` antes que registrar la ruta en `App.js`
 - Registro en `App.js` antes de agregar `navigation.navigate` en el catálogo
+- FR-013: el cambio de backend (T019, 403→404) antes que el manejo de 404 en el frontend (T020)
 
 ---
 
@@ -173,3 +180,5 @@ Task T017: verificación de rutas (backend)
 - `ServiceDetailScreen` es un archivo nuevo; `App.js` necesita el import correspondiente
 - El estado local de `BuyerCatalogScreen` persiste entre `navigate` + `goBack()` sin gestión global de estado — este es el comportamiento estándar de React Navigation stack
 - Validar siempre con el backend Docker corriendo; los errores de red son esperados si Docker está detenido (Escenario 4 del quickstart)
+- FR-012 ya está satisfecho en código (`GET /:id` usa `optionalAuth`); T018 es solo verificación
+- FR-013 requiere un cambio real: hoy `GET /:id` devuelve 403 a no-dueños de un DRAFT (services.js:133-135); T019 lo cambia a 404 preservando el acceso del dueño a su propio borrador

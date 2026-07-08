@@ -8,6 +8,7 @@ import {
   FlatList,
   Dimensions,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -64,7 +65,7 @@ const carouselStyles = StyleSheet.create({
   dotActive: { backgroundColor: PRIMARY, width: 18 },
 });
 
-export default function ServiceDetailScreen({ route }) {
+export default function ServiceDetailScreen({ route, navigation }) {
   const { serviceId } = route.params;
   const [service, setService] = useState(null);
   const [categoryName, setCategoryName] = useState(null);
@@ -83,8 +84,14 @@ export default function ServiceDetailScreen({ route }) {
           const cat = categories.find((c) => c.id === svc.categoryId);
           setCategoryName(cat ? cat.name : null);
         }
-      } catch {
-        setError('No se pudo cargar el detalle del servicio.');
+      } catch (err) {
+        // FR-013: un 404 significa que el servicio fue despublicado o ya no existe;
+        // se oculta como "no disponible" en lugar de un error genérico de carga.
+        if (err?.response?.status === 404) {
+          setError('Servicio no disponible. Puede haber sido despublicado o ya no existe.');
+        } else {
+          setError('No se pudo cargar el detalle del servicio.');
+        }
       } finally {
         setLoading(false);
       }
@@ -103,6 +110,9 @@ export default function ServiceDetailScreen({ route }) {
     return (
       <View style={styles.centered}>
         <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.backButtonText}>Volver al catálogo</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -165,4 +175,12 @@ const styles = StyleSheet.create({
   packageScope: { fontSize: 13, color: '#555', marginBottom: 4 },
   packageDelivery: { fontSize: 12, color: '#888' },
   errorText: { fontSize: 15, color: '#c62828', textAlign: 'center' },
+  backButton: {
+    marginTop: 20,
+    backgroundColor: PRIMARY,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  backButtonText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });
