@@ -129,9 +129,12 @@ router.get('/:id', optionalAuth, (req, res) => {
   const service = store.services.get(req.params.id);
   if (!service) return res.status(404).json({ error: 'NOT_FOUND', message: 'Servicio no encontrado.' });
 
+  // Ocultación por diseño (FR-013, Principio IV): un servicio en DRAFT es invisible
+  // para quien no es su dueño (comprador autenticado o anónimo). Se responde 404 —no 403—
+  // para no revelar la existencia de servicios no publicados. El dueño conserva acceso.
   const ownerId = req.user?.userId;
   if (service.status === 'DRAFT' && service.freelancerId !== ownerId) {
-    return res.status(403).json({ error: 'FORBIDDEN', message: 'Acceso denegado.' });
+    return res.status(404).json({ error: 'NOT_FOUND', message: 'Servicio no encontrado.' });
   }
 
   res.json({
