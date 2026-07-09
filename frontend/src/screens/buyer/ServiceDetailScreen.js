@@ -118,8 +118,14 @@ export default function ServiceDetailScreen({ route, navigation }) {
           const cat = categories.find((c) => c.id === svc.categoryId);
           setCategoryName(cat ? cat.name : null);
         }
-      } catch {
-        setError('No se pudo cargar el detalle del servicio.');
+      } catch (err) {
+        // FR-013: un 404 significa que el servicio fue despublicado o ya no existe;
+        // se oculta como "no disponible" en lugar de un error genérico de carga.
+        if (err?.response?.status === 404) {
+          setError('Servicio no disponible. Puede haber sido despublicado o ya no existe.');
+        } else {
+          setError('No se pudo cargar el detalle del servicio.');
+        }
       } finally {
         setLoading(false);
       }
@@ -138,6 +144,9 @@ export default function ServiceDetailScreen({ route, navigation }) {
     return (
       <View style={styles.centered}>
         <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.backButtonText}>Volver al catálogo</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -212,4 +221,12 @@ const styles = StyleSheet.create({
   contractButtonDisabled: { opacity: 0.6 },
   contractButtonText: { color: '#fff', fontWeight: '700', fontSize: 14 },
   errorText: { fontSize: 15, color: '#c62828', textAlign: 'center' },
+  backButton: {
+    marginTop: 20,
+    backgroundColor: PRIMARY,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  backButtonText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });
