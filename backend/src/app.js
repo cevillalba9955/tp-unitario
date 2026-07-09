@@ -5,6 +5,7 @@ const authRouter = require('./routes/auth');
 const categoriesRouter = require('./routes/categories');
 const servicesRouter = require('./routes/services');
 const imagesRouter = require('./routes/images');
+const ordersRouter = require('./routes/orders');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -34,6 +35,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/categories', categoriesRouter);
 app.use('/api/v1/services', servicesRouter);
 app.use('/api/v1/services/:serviceId/images', imagesRouter);
+app.use('/api/v1/orders', ordersRouter);
 
 // Global error handler
 app.use((err, req, res, next) => {

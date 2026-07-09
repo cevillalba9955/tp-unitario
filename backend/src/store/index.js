@@ -10,6 +10,7 @@ const store = {
   packages: new Map(),
   images: new Map(),
   users: new Map(),
+  orders: new Map(),
 };
 
 const seedCategories = [

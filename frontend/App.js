@@ -8,6 +8,10 @@ import CreateServiceScreen from './src/screens/freelancer/CreateServiceScreen';
 import BuyerLoginScreen from './src/screens/buyer/BuyerLoginScreen';
 import BuyerCatalogScreen from './src/screens/buyer/BuyerCatalogScreen';
 import ServiceDetailScreen from './src/screens/buyer/ServiceDetailScreen';
+import BuyerOrdersScreen from './src/screens/buyer/BuyerOrdersScreen';
+import BuyerOrderDetailScreen from './src/screens/buyer/BuyerOrderDetailScreen';
+import FreelancerOrdersScreen from './src/screens/freelancer/FreelancerOrdersScreen';
+import FreelancerOrderDetailScreen from './src/screens/freelancer/FreelancerOrderDetailScreen';
 
 const Stack = createStackNavigator();
 
@@ -51,6 +55,42 @@ export default function App() {
             options={{
               title: 'Detalle del Servicio',
               headerStyle: { backgroundColor: '#7b1fa2' },
+              headerTintColor: '#fff',
+            }}
+          />
+          <Stack.Screen
+            name="BuyerOrders"
+            component={BuyerOrdersScreen}
+            options={{
+              title: 'Mis Pedidos',
+              headerStyle: { backgroundColor: '#7b1fa2' },
+              headerTintColor: '#fff',
+            }}
+          />
+          <Stack.Screen
+            name="BuyerOrderDetail"
+            component={BuyerOrderDetailScreen}
+            options={{
+              title: 'Detalle del Pedido',
+              headerStyle: { backgroundColor: '#7b1fa2' },
+              headerTintColor: '#fff',
+            }}
+          />
+          <Stack.Screen
+            name="FreelancerOrders"
+            component={FreelancerOrdersScreen}
+            options={{
+              title: 'Pedidos Entrantes',
+              headerStyle: { backgroundColor: '#1976d2' },
+              headerTintColor: '#fff',
+            }}
+          />
+          <Stack.Screen
+            name="FreelancerOrderDetail"
+            component={FreelancerOrderDetailScreen}
+            options={{
+              title: 'Detalle del Pedido',
+              headerStyle: { backgroundColor: '#1976d2' },
               headerTintColor: '#fff',
             }}
           />

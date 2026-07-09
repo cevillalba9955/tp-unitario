@@ -14,7 +14,7 @@ export default function BuyerLoginScreen({ navigation }) {
 
   useEffect(() => {
     if (getToken()) {
-      navigation.goBack();
+      navigation.navigate('BuyerCatalog');
     }
   }, []);
 
@@ -45,7 +45,9 @@ export default function BuyerLoginScreen({ navigation }) {
       const { token, role } = await login(trimmedEmail, password, 'buyer');
       setToken(token);
       setRole(role);
-      navigation.goBack();
+      // Ir al catálogo (home del comprador) en vez de goBack(): si se llegó desde el
+      // login del freelancer, goBack() regresaría a esa pantalla en lugar del catálogo.
+      navigation.navigate('BuyerCatalog');
     } catch (e) {
       if (!e.response) {
         setError('Error al iniciar sesión. Verificá tu conexión.');
@@ -99,7 +101,7 @@ export default function BuyerLoginScreen({ navigation }) {
           <Text style={styles.switchText}>¿Sos freelancer? Ingresá aquí</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.switchLink}>
+        <TouchableOpacity onPress={() => navigation.navigate('BuyerCatalog')} style={styles.switchLink}>
           <Text style={styles.switchText}>Ver catálogo público</Text>
         </TouchableOpacity>
       </View>
