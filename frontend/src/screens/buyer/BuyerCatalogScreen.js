@@ -36,9 +36,14 @@ export default function BuyerCatalogScreen({ navigation }) {
       headerLeft: () => null,
       headerRight: () =>
         isLoggedIn ? (
-          <TouchableOpacity onPress={handleLogout} style={{ marginRight: 16 }}>
-            <Text style={{ color: '#fff', fontSize: 14 }}>Cerrar sesión</Text>
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', marginRight: 12, alignItems: 'center' }}>
+            <TouchableOpacity onPress={() => navigation.navigate('BuyerOrders')} style={{ marginRight: 16 }}>
+              <Text style={{ color: '#fff', fontSize: 14 }}>Mis pedidos</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleLogout}>
+              <Text style={{ color: '#fff', fontSize: 14 }}>Salir</Text>
+            </TouchableOpacity>
+          </View>
         ) : (
           <TouchableOpacity onPress={handleLogin} style={{ marginRight: 16 }}>
             <Text style={{ color: '#fff', fontSize: 14 }}>Iniciar sesión</Text>

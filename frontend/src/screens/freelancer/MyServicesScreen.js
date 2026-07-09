@@ -28,9 +28,14 @@ export default function MyServicesScreen({ navigation }) {
     navigation.setOptions({
       headerLeft: () => null,
       headerRight: () => (
-        <TouchableOpacity onPress={handleLogout} style={{ marginRight: 16 }}>
-          <Text style={{ color: '#1976d2', fontSize: 14 }}>Cerrar sesión</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', marginRight: 12, alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('FreelancerOrders')} style={{ marginRight: 16 }}>
+            <Text style={{ color: '#1976d2', fontSize: 14 }}>Pedidos</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout}>
+            <Text style={{ color: '#1976d2', fontSize: 14 }}>Salir</Text>
+          </TouchableOpacity>
+        </View>
       ),
     });
   }, [navigation]);

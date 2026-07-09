@@ -9,11 +9,13 @@ import {
   Dimensions,
   ActivityIndicator,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 import { getService, getCategories } from '../../api/servicesApi';
-import { API_BASE_URL } from '../../api/config';
+import { API_BASE_URL, getToken } from '../../api/config';
+import { createOrder } from '../../api/ordersApi';
 
 const PRIMARY = '#7b1fa2';
 
@@ -71,6 +73,38 @@ export default function ServiceDetailScreen({ route, navigation }) {
   const [categoryName, setCategoryName] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [contratandoId, setContratandoId] = useState(null);
+
+  // US1: contratar un paquete. Sin sesión, dirige al login del comprador.
+  const handleContratar = async (pkg) => {
+    if (!getToken()) {
+      navigation.navigate('BuyerLogin');
+      return;
+    }
+    setContratandoId(pkg.id);
+    try {
+      await createOrder(serviceId, pkg.id);
+      Alert.alert(
+        'Pedido creado',
+        `Contrataste "${pkg.name}". Podés seguir su estado en Mis pedidos.`,
+        [
+          { text: 'Ver mis pedidos', onPress: () => navigation.navigate('BuyerOrders') },
+          { text: 'Seguir viendo', style: 'cancel' },
+        ]
+      );
+    } catch (e) {
+      const status = e?.response?.status;
+      const msg =
+        status === 403
+          ? 'No podés contratar tus propios servicios.'
+          : status === 409
+            ? 'Este servicio ya no está disponible.'
+            : 'No se pudo crear el pedido. Intentá de nuevo.';
+      Alert.alert('Error', msg);
+    } finally {
+      setContratandoId(null);
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -138,6 +172,15 @@ export default function ServiceDetailScreen({ route, navigation }) {
               </View>
               <Text style={styles.packageScope}>{pkg.scope}</Text>
               <Text style={styles.packageDelivery}>Entrega: {pkg.deliveryDays} días</Text>
+              <TouchableOpacity
+                style={[styles.contractButton, contratandoId === pkg.id && styles.contractButtonDisabled]}
+                onPress={() => handleContratar(pkg)}
+                disabled={contratandoId !== null}
+              >
+                <Text style={styles.contractButtonText}>
+                  {contratandoId === pkg.id ? 'Contratando…' : 'Contratar'}
+                </Text>
+              </TouchableOpacity>
             </View>
           ))}
         </View>
@@ -174,6 +217,9 @@ const styles = StyleSheet.create({
   packagePrice: { fontSize: 15, fontWeight: '700', color: PRIMARY },
   packageScope: { fontSize: 13, color: '#555', marginBottom: 4 },
   packageDelivery: { fontSize: 12, color: '#888' },
+  contractButton: { marginTop: 10, backgroundColor: PRIMARY, paddingVertical: 10, borderRadius: 8, alignItems: 'center' },
+  contractButtonDisabled: { opacity: 0.6 },
+  contractButtonText: { color: '#fff', fontWeight: '700', fontSize: 14 },
   errorText: { fontSize: 15, color: '#c62828', textAlign: 'center' },
   backButton: {
     marginTop: 20,
